@@ -7,7 +7,7 @@ const LINKS = [
   { to: 'seances', label: 'Séances', soon: true },
   { to: 'bibliotheque', label: 'Bibliothèque' },
   { to: 'wod', label: 'WOD', soon: true },
-  { to: 'mobilite', label: 'Mobilité', soon: true },
+  { to: 'mobilite', label: 'Mobilité' },
   { to: 'stats', label: 'Statistiques', soon: true },
   { to: 'reglages', label: 'Réglages' },
 ]
