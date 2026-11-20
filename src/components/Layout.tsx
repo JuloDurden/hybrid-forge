@@ -6,7 +6,7 @@ const LINKS = [
   { to: 'plan', label: 'Plan & macrocycles', soon: true },
   { to: 'seances', label: 'Séances', soon: true },
   { to: 'bibliotheque', label: 'Bibliothèque' },
-  { to: 'wod', label: 'WOD', soon: true },
+  { to: 'wod', label: 'WOD' },
   { to: 'mobilite', label: 'Mobilité' },
   { to: 'stats', label: 'Statistiques', soon: true },
   { to: 'reglages', label: 'Réglages' },

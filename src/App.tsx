@@ -4,6 +4,7 @@ import { loadAll, type AppData } from './lib/data'
 import { GitHubError, loadConfig, type RepoConfig } from './lib/github'
 import { Library } from './pages/Library'
 import { Mobility } from './pages/Mobility'
+import { WodPage } from './pages/Wod'
 import { Settings } from './pages/Settings'
 import { Summary } from './pages/Summary'
 
@@ -48,6 +49,8 @@ export default function App() {
     content = <div className="muted">Chargement des données…</div>
   } else if (effectiveRoute === 'bibliotheque') {
     content = <Library config={config!} />
+  } else if (effectiveRoute === 'wod') {
+    content = <WodPage config={config!} data={data} />
   } else if (effectiveRoute === 'mobilite') {
     content = <Mobility config={config!} data={data} />
   } else if (effectiveRoute === 'resume') {
