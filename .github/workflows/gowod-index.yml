@@ -1,0 +1,29 @@
+name: Index GOWOD
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install requests yt-dlp
+      - run: python scripts/fetch_gowod.py
+      - name: Enregistrement
+        run: |
+          if [ -n "$(git status --porcelain scripts/vendor/)" ]; then
+            git config user.name "hybrid-forge-bot"
+            git config user.email "hybrid-forge-bot@users.noreply.github.com"
+            git add scripts/vendor/
+            git commit -q -m "data: index GOWOD (mouvements publics + chaîne YouTube)"
+            git push -q
+          fi
