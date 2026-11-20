@@ -420,6 +420,7 @@ function Preview({ p, minutes, setMinutes, onStart, onSend, onCopy, onEdit, onMo
       <span className="overline" style={{ color: TYPE_COLOR[p.type] }}>{TYPE_FR[p.type]}</span>
       <h2 style={{ margin: 0 }}>{p.title}</h2>
       {p.sub && <span className="muted">{p.sub}</span>}
+      {p.note && <div className="notice" style={{ color: 'var(--warn)' }}>⚠ {p.note}</div>}
       <DurationChips value={minutes} onChange={setMinutes} />
       <span className="muted small">{moves.length} mouvements · {steps.length} étapes · {fmtMin(totalSeconds(steps))} transitions comprises</span>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

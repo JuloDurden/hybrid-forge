@@ -211,6 +211,35 @@ FICHES: dict[str, dict] = {
         why="Enchaîne good morning et squat : charnière de hanche et squat dans le même geste.",
         how=["Mains derrière la tête, penche-toi dos droit.", "Descends en squat sans te relever.", "Remonte en penché, puis redresse-toi."],
         avoid=["Dos qui s'arrondit."]),
+    # ---- Sciatique (douceur, amplitude sans douleur)
+    "sciatic-nerve-glide": dict(fr="Glissement du nerf sciatique", kind="dyn", sides=True, garmin="WARM_UP/WARM_UP", zones=["Ischios", "Bas du dos"],
+        why="Fait coulisser le nerf dans ses gaines sans le mettre en tension : il redevient moins sensible.",
+        how=["Assis au bord d'une chaise, dos droit.", "Tends le genou en relevant la tête (regard vers le haut).", "Plie le genou en baissant la tête.", "Mouvement lent et fluide, les deux bouts du nerf bougent en sens opposé."],
+        avoid=["Tenir la position jambe tendue tête baissée : ça étire le nerf au lieu de le faire glisser.", "Chercher la sensation de décharge : reste avant elle."]),
+    "knee-to-chest": dict(fr="Genou vers la poitrine", kind="stat", sides=True, garmin="WARM_UP/STRETCH_LYING_KNEE_TO_CHEST", zones=["Bas du dos", "Fessiers"],
+        why="Relâche doucement le bas du dos et le fessier, allongé, sans charge.",
+        how=["Allongé sur le dos, une jambe pliée pied au sol.", "Ramène l'autre genou vers la poitrine avec les mains.", "Relâche les épaules et respire lentement."],
+        avoid=["Tirer fort : la tension doit rester légère.", "Décoller la tête."]),
+    "supine-figure-4": dict(fr="Figure 4 allongé", kind="stat", sides=True, garmin="WARM_UP/STRETCH_LYING_PIRIFORMIS", zones=["Fessiers", "Hanches"],
+        why="Étire le piriforme, dont la tension peut irriter le nerf sciatique, en gardant le dos posé au sol.",
+        how=["Allongé, pieds au sol, pose la cheville sur le genou opposé.", "Attrape l'arrière de la cuisse d'appui et rapproche-la doucement.", "Tête et bassin restent au sol."],
+        avoid=["Aller jusqu'à la douleur dans la jambe.", "Décoller le bassin."]),
+    "press-up": dict(fr="Extension allongée (McKenzie)", kind="dyn", sides=False, garmin="WARM_UP/STRETCH_COBRA", zones=["Bas du dos"],
+        why="Extension douce du bas du dos, souvent soulageante quand la douleur vient d'un disque.",
+        how=["Allongé sur le ventre, mains sous les épaules.", "Pousse pour monter le buste, bassin et fessiers relâchés au sol.", "Monte seulement jusqu'où c'est confortable, redescends, recommence."],
+        avoid=["Continuer si la douleur descend plus bas dans la jambe : arrête et passe au suivant.", "Contracter les fessiers."]),
+    "bird-dog": dict(fr="Bird dog", kind="dyn", sides=False, garmin="HIP_STABILITY/QUADRUPED_WITH_LEG_LIFT", zones=["Bas du dos", "Fessiers"],
+        why="Renforce le gainage profond sans charger la colonne : le bas du dos est mieux soutenu.",
+        how=["À quatre pattes, dos neutre.", "Tends un bras et la jambe opposée, sans cambrer.", "Tiens 2 secondes, reviens, alterne."],
+        avoid=["Lever la jambe trop haut et creuser le dos.", "Bassin qui bascule sur le côté."]),
+    "glute-bridge": dict(fr="Pont fessier", kind="dyn", sides=False, garmin="HIP_RAISE/HIP_RAISE", zones=["Fessiers", "Bas du dos"],
+        why="Réveille les fessiers, qui soulagent le bas du dos de son travail.",
+        how=["Allongé, pieds au sol largeur de hanches.", "Serre les fessiers et monte le bassin jusqu'à l'alignement épaules-genoux.", "Redescends vertèbre par vertèbre."],
+        avoid=["Cambrer en haut : c'est le fessier qui pousse, pas le dos."]),
+    "childs-pose": dict(fr="Posture de l'enfant", kind="stat", sides=False, garmin="WARM_UP/STRETCH_CHILDS_POSE", zones=["Bas du dos", "Thoracique"],
+        why="Détente globale du dos et respiration lente en fin de séance.",
+        how=["À genoux, fesses vers les talons, bras devant.", "Front posé, épaules relâchées.", "Respire dans le bas du dos."],
+        avoid=["La garder si elle réveille la douleur dans la jambe : remplace-la par la torsion allongée."]),
 }
 
 # Protocoles : liste ordonnée (id, priorité 1 = toujours présent, 3 = seulement pour les longues durées)
@@ -250,6 +279,10 @@ PROTOCOLS = [
     dict(id="cl-epaules", type="classique", title="Épaules et tractions", sub="Dorsaux, omoplates, coiffe", img="lat", steps=[
         ("band-pass", 1), ("scap-mobilization", 1), ("the-prayer-stretch", 1), ("double-external-band-rotations", 2),
         ("lat-roll", 2), ("thread-the-needle", 3), ("forearms-active-stretch", 3)]),
+    dict(id="cl-sciatique", type="classique", title="Sciatique, en douceur", sub="Glissements nerveux, extension, gainage", img="child",
+         note="Reste toujours sans douleur. Si la douleur descend plus bas dans la jambe pendant un mouvement, passe au suivant. Faiblesse dans la jambe, perte de sensibilité, troubles urinaires ou douleur qui s'aggrave : consulte rapidement.",
+         steps=[("cat-cow", 1), ("sciatic-nerve-glide", 1), ("knee-to-chest", 1), ("press-up", 1), ("supine-figure-4", 2), ("glute-bridge", 2),
+                ("bird-dog", 2), ("supine-twist", 3), ("childs-pose", 3)]),
     dict(id="cl-dos", type="classique", title="Détente du bas du dos", sub="Hanches et colonne, sans charge", img="child", steps=[
         ("cat-cow", 1), ("supine-twist", 1), ("seated-piriformis-stretch", 1), ("glute-roll", 2), ("90-to-90", 2), ("the-knight-stretch-static", 3)]),
 ]

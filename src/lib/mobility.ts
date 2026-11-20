@@ -22,6 +22,7 @@ export interface Protocol {
   type: 'activation' | 'recuperation' | 'classique' | 'perso' | 'flow'
   title: string
   sub?: string
+  note?: string
   sport?: string
   steps: { id: string; prio?: number }[]
 }
