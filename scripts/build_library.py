@@ -326,6 +326,64 @@ for g in g_entries:
         "src": "garmin",
     })
 
+# ---------------------------------------------------------------- vidéos CrossFit.com
+CF_PATH = ROOT / "scripts/vendor/crossfit-movements.json"
+CF_EQUIP = {"dumbbell": "dumbbell", "kettlebell": "kettlebell", "barbell": "barbell", "medball": "medball", "ring": "ring", "rope": "rope", "box": "box"}
+OLY = {"clean", "snatch", "jerk", "sots"}
+GYM = {"handstand", "muscle", "kipping", "rope", "ring", "rings", "lsit", "l", "pirouette", "scale", "roll", "kip", "skin", "shoot", "straddle", "toes", "knees", "pullup", "butterfly"}
+# correspondances Garmin choisies à la main quand le calcul automatique se trompe
+CF_GARMIN = {
+    "Strict Pull-up": "Pull-up", "Butterfly Pull-up": "Kipping Pull-up", "Kipping Chest-to-bar Pull-up": "Kipping Pull-up",
+    "Strict Chest-to-bar Pull-up": "Pull-up", "Strict Knees-to-elbows": "Toes to Elbows", "Strict Toes-to-rings": "Toes to Bar",
+    "Strict Toes-to-bar": "Toes to Bar", "Kipping Toes-to-bar": "Toes to Bar", "Strict Muscle-up": "Ring Muscle-up",
+    "Kipping Muscle-up": "Ring Muscle-up", "Strict Bar Muscle-up": "Bar Muscle-up", "Kipping Bar Muscle-up": "Bar Muscle-up",
+    "Strict Handstand Push-up": "Handstand Push-up", "Freestanding Handstand Push-up": "Handstand Push-up",
+    "Chest-to-wall Handstand Push-up": "Handstand Push-up", "Handstand Push-up Variations": "Handstand Push-up",
+    "Kipping Deficit Handstand Push-up": "Kipping Parallette Handstand Push-up", "Single-under": "Jump Rope",
+    "Slam Ball": "Medicine Ball Slam", "Dip": "Body-weight Dip", "Single-leg Squat (Pistol)": "Pistol Squat",
+    "Barbell Front-rack Lunge": "Barbell Lunge", "Dumbbell Front-rack Lunge": "Alternating Dumbbell Lunge",
+    "Front Squat": "Barbell Front Squat", "Back Squat": "Barbell Back Squat", "Bench Press": "Barbell Bench Press",
+    "Shoulder Press": "Overhead Barbell Press", "Pull-over": "Lying Dumbbell Pull-over to Extension",
+    "AbMat Sit-up": "Sit-up", "Hang Clean": "Barbell Hang Squat Clean", "Inverted Burpee": "Burpee",
+}
+G_BY_NAME = {g["name"]: g for g in g_entries}
+cf_added = cf_linked = 0
+if CF_PATH.exists():
+    by_tokens: dict[frozenset, list[dict]] = {}
+    for e in library:
+        by_tokens.setdefault(frozenset(tokens(e["en"])), []).append(e)
+    for cf in json.loads(CF_PATH.read_text()):
+        if not cf.get("youtube") or cf["slug"] == "movements" or cf["name"].lower().startswith("what is"):
+            continue
+        tk = tokens(cf["name"])
+        hits = by_tokens.get(frozenset(tk), []) or by_tokens.get(frozenset(tk + ["barbell"]), [])
+        if hits:
+            for e in hits:
+                e["yt"] = cf["youtube"]
+                e["ytSrc"] = cf["url"]
+            cf_linked += 1
+            continue
+        top = match(cf["name"], None, [], False)
+        if cf["name"] in CF_GARMIN and CF_GARMIN[cf["name"]] in G_BY_NAME:
+            forced = G_BY_NAME[CF_GARMIN[cf["name"]]]
+            top = [(1.0, forced)] + [t for t in top if t[1] is not forced][:2]
+        best_s, best = top[0]
+        eqs = [CF_EQUIP[t] for t in tk if t in CF_EQUIP]
+        eq = eqs[0] if eqs else ("barbell" if set(tk) & OLY or "barbell" in best["tok"] else "rope" if "rope" in tk else "body")
+        cat = "halto" if set(tk) & OLY else "wod" if set(tk) & GYM or "ghd" in tk else GARMIN_CAT.get(best["category"], "muscu")
+        muscles = GARMIN_MUSCLES.get(best["category"], [])
+        library.append({
+            "id": f"crossfit:{cf['slug']}",
+            "name": translate(cf["name"]) or cf["name"],
+            "en": cf["name"],
+            "cat": cat, "eq": eq, "mine": eq in MY_EQUIP and not set(tk) & {"ring", "rings", "ghd", "rope", "abmat"},
+            "pm": [MUSCLES_FR[m] for m in muscles], "sm": [], "lvl": None, "how": [], "img": [],
+            "g": [garmin_ref(sc, g, cf["name"]) for sc, g in top],
+            "src": "crossfit", "yt": cf["youtube"], "ytSrc": cf["url"],
+        })
+        cf_added += 1
+print(f"CrossFit : {cf_linked} vidéos rattachées à des mouvements existants, {cf_added} mouvements ajoutés")
+
 library.sort(key=lambda e: e["name"].lower())
 garmin_fr = {f"{g['category']}/{g['exercise']}": translate(g["name"]) or g["name"] for g in GARMIN}
 (ROOT / "src/data/garmin-fr.json").write_text(json.dumps(garmin_fr, ensure_ascii=False, separators=(",", ":")))

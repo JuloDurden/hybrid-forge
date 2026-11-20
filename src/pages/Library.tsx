@@ -83,7 +83,7 @@ export function Library({ config }: { config: RepoConfig }) {
       return true
     })
     // d'abord ce que tu fais déjà, puis ce qui a une image
-    const rank = (m: Movement) => (histByMove.has(m.id) ? 0 : m.img.length ? 1 : 2)
+    const rank = (m: Movement) => (histByMove.has(m.id) ? 0 : m.yt ? 1 : m.img.length ? 2 : 3)
     return list.sort((a, b) => rank(a) - rank(b) || (histByMove.get(b.id)?.sessions.length ?? 0) - (histByMove.get(a.id)?.sessions.length ?? 0) || displayName(a, lang).localeCompare(displayName(b, lang)))
   }, [d, q, cat, eq, onlyMine, withSecondary, zoneDef, histByMove, lang])
 
@@ -255,9 +255,12 @@ function Tile({ m, lang, onClick, meta, sub, badge, badgeWarn, name }: {
             <img src={m.img[0]} alt="" loading="lazy" />
             {m.img[1] && <img className="alt" src={m.img[1]} alt="" loading="lazy" />}
           </>
+        ) : m?.yt ? (
+          <img src={`https://i.ytimg.com/vi/${m.yt}/mqdefault.jpg`} alt="" loading="lazy" />
         ) : (
           <MuscleThumb primary={m?.pm ?? []} secondary={m?.sm ?? []} />
         )}
+        {m?.yt && <span className="tile-play" aria-label="Vidéo">▶</span>}
         {badge && <span className="tile-badge" style={badgeWarn ? { background: 'var(--warn)', color: '#000' } : undefined}>{badge}</span>}
       </div>
       <div className="tile-text">
@@ -330,7 +333,7 @@ function Picker({ items, onPick, initial = '' }: { items: { id: string; label: s
 function MovementDetail({ m, d, reverse, update }: { m: Movement; d: LibData; reverse: Map<string, Movement>; update: (f: (o: Overrides) => Overrides, msg: string) => void }) {
   const [lang] = useMovementLang()
   const [videoInput, setVideoInput] = useState('')
-  const video = d.overrides.video[m.id] ?? m.video
+  const video = d.overrides.video[m.id] ?? m.video ?? (m.yt ? `https://www.youtube.com/watch?v=${m.yt}` : undefined)
   const keys = [...reverse.entries()].filter(([, v]) => v.id === m.id).map(([k]) => k).filter((k) => d.history[k])
   return (
     <>
@@ -340,6 +343,9 @@ function MovementDetail({ m, d, reverse, update }: { m: Movement; d: LibData; re
         {m.name !== m.en && <span className="small muted">{otherName(m, lang)}</span>}
       </div>
       {video && <DemoVideo url={video} />}
+      {video && m.yt && !d.overrides.video[m.id] && !m.video && m.ytSrc && (
+        <a className="small" href={m.ytSrc} target="_blank" rel="noreferrer">Vidéo CrossFit.com · voir la fiche d'origine</a>
+      )}
       {!video && m.img.length > 0 && <AnimatedFrames frames={m.img} alt={`${m.en}, démonstration`} />}
       {!video && !m.img.length && <div className="empty">Pas d'image pour ce mouvement. Ajoute un lien vidéo ci-dessous (YouTube, fichier vidéo, Instagram…).</div>}
       <BodyMap primary={m.pm} secondary={m.sm} />

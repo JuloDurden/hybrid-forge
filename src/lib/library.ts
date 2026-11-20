@@ -21,8 +21,11 @@ export interface Movement {
   how: string[]
   img: string[]
   g: GarminRef[]
-  src: 'fedb' | 'garmin' | 'custom'
+  src: 'fedb' | 'garmin' | 'custom' | 'crossfit'
   video?: string
+  /** vidéo YouTube officielle CrossFit.com (identifiant) et page source */
+  yt?: string
+  ytSrc?: string
 }
 
 export interface GarminExercise {
