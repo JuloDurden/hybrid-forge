@@ -170,7 +170,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
               ))}
             </div>
           </div>
-          <span className="small muted">Balades exclues. Blocs échauffement / cooldown regroupés avec leur séance.</span>
+          <span className="small muted">Garmin + Apple Watch (doublons écartés). Balades exclues, blocs échauffement / cooldown regroupés avec leur séance.</span>
         </section>
       </div>
 
@@ -201,7 +201,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
                   <div key={`${p.workoutId}`} className="row" style={{ gap: 8 }}><span className="dot" style={{ background: 'var(--surface-3)' }} /><span style={{ fontSize: 14 }}>{p.name}</span></div>
                 ))}
                 {!sess.length && !planned.length && <span className="small muted">Repos</span>}
-                {sess.length > 0 && <span className="tag">Garmin</span>}
+                {sess.length > 0 && <span className="tag">{[...new Set(sess.flatMap((x) => x.activities.map((a) => (a.source === 'healthfit' ? 'Apple Watch' : 'Garmin'))))].join(' + ')}</span>}
               </div>
             )
           })}
@@ -265,7 +265,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
             <div key={s.start} className="list-row">
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
                 <span style={{ fontSize: 14, fontWeight: 600 }}>{s.activities.filter((a) => categorize(a, rules) !== 'warmup').map((a) => a.name).join(' + ') || s.activities[0].name}</span>
-                <span className="small muted">{s.start.slice(8, 10)}/{s.start.slice(5, 7)} · {formatDuration(s.durationS)}{s.activities[0].avgHR ? ` · FC ${s.activities[0].avgHR}` : ''}</span>
+                <span className="small muted">{s.start.slice(8, 10)}/{s.start.slice(5, 7)} · {s.activities[0].source === 'healthfit' ? 'Apple Watch · ' : ''}{formatDuration(s.durationS)}{s.activities[0].avgHR ? ` · FC ${s.activities[0].avgHR}` : ''}</span>
               </div>
               <span className="small" style={{ fontWeight: 600, color: CATEGORY_META[s.category].color, whiteSpace: 'nowrap' }}>{CATEGORY_META[s.category].label}</span>
             </div>

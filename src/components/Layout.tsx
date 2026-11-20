@@ -28,7 +28,7 @@ export function Layout({ route, syncedAt, children }: { route: string; syncedAt?
         <div className="sync-box">
           <span className="small muted" style={{ fontWeight: 600 }}>SYNCHRO</span>
           <span>Garmin · {relativeTime(syncedAt)}</span>
-          <span className="muted">HealthFit · à venir</span>
+          <span>Apple Watch · via HealthFit</span>
         </div>
       </nav>
       <main className="main">{children}</main>

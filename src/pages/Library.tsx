@@ -14,6 +14,7 @@ type Selection = { kind: 'movement'; id: string } | { kind: 'history'; key: stri
 const CATS: (Movement['cat'] | 'all')[] = ['all', 'muscu', 'halto', 'gainage', 'wod', 'plyo', 'cardio', 'mobilite']
 const EQUIPS = ['barbell', 'dumbbell', 'kettlebell', 'suspension', 'cable', 'band', 'body', 'medball', 'ezbar']
 const PAGE = 90
+const MUSCLE_FILTERS = ['Pectoraux', 'Épaules', 'Trapèzes', 'Grand dorsal', 'Milieu du dos', 'Lombaires', 'Biceps', 'Triceps', 'Avant-bras', 'Abdominaux', 'Fessiers', 'Quadriceps', 'Ischios', 'Adducteurs', 'Abducteurs', 'Mollets', 'Cou']
 
 const fmtDate = (d: string) => `${d.slice(8, 10)}/${d.slice(5, 7)}`
 const kg = (v: number | null | undefined) => (v ? `${String(v).replace('.', ',')} kg` : 'PDC')
@@ -36,6 +37,8 @@ export function Library({ config }: { config: RepoConfig }) {
   const [cat, setCat] = useState<Movement['cat'] | 'all'>('all')
   const [eqs, setEqs] = useState<string[]>([])
   const [onlyMine, setOnlyMine] = useState(true)
+  const [muscles, setMuscles] = useState<string[]>([])
+  const [withSecondary, setWithSecondary] = useState(false)
   const [limit, setLimit] = useState(PAGE)
   const [sel, setSel] = useState<Selection>(null)
   const [saving, setSaving] = useState<string | null>(null)
@@ -55,10 +58,14 @@ export function Library({ config }: { config: RepoConfig }) {
       if (cat !== 'all' && m.cat !== cat) return false
       if (onlyMine && !m.mine) return false
       if (eqs.length && !eqs.includes(m.eq)) return false
+      if (muscles.length) {
+        const worked = withSecondary ? [...m.pm, ...m.sm] : m.pm
+        if (!muscles.some((x) => worked.includes(x) || (x === 'Épaules' && worked.some((w) => w.startsWith('Deltoïdes'))))) return false
+      }
       if (fq && !fold(`${m.name} ${m.en}`).includes(fq)) return false
       return true
     })
-  }, [d, q, cat, eqs, onlyMine])
+  }, [d, q, cat, eqs, onlyMine, muscles, withSecondary])
 
   const historyKeys = useMemo(() => {
     if (!d) return []
@@ -141,6 +148,14 @@ export function Library({ config }: { config: RepoConfig }) {
               <button key={e} className={`chip sm ${eqs.includes(e) ? 'on-eq' : ''}`} onClick={() => { setEqs(eqs.includes(e) ? eqs.filter((x) => x !== e) : [...eqs, e]); setLimit(PAGE) }}>{EQUIP_FR[e]}</button>
             ))}
             <label className="toggle"><input type="checkbox" checked={onlyMine} onChange={(e) => setOnlyMine(e.target.checked)} /> Seulement mon matériel</label>
+          </div>
+          <div className="row" style={{ flexWrap: 'wrap', gap: 8 }}>
+            <span className="small muted">Muscle</span>
+            {MUSCLE_FILTERS.map((x) => (
+              <button key={x} className={`chip sm ${muscles.includes(x) ? 'on-eq' : ''}`} onClick={() => { setMuscles(muscles.includes(x) ? muscles.filter((y) => y !== x) : [...muscles, x]); setLimit(PAGE) }}>{x}</button>
+            ))}
+            <label className="toggle"><input type="checkbox" checked={withSecondary} onChange={(e) => setWithSecondary(e.target.checked)} /> Inclure les muscles secondaires</label>
+            {muscles.length > 0 && <button className="chip sm" onClick={() => setMuscles([])}>Effacer</button>}
             <span className="small muted">{filtered.length} résultats</span>
           </div>
         </>

@@ -3,7 +3,7 @@ import { readJson, type RepoConfig } from './github'
 // ---------- Types des fichiers du repo de données ----------
 
 export interface Activity {
-  id: number
+  id: number | string
   start: string // "YYYY-MM-DD HH:MM:SS" heure locale
   type: string
   name: string
