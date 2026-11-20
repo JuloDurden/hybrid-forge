@@ -21,7 +21,8 @@ export interface Movement {
   how: string[]
   img: string[]
   g: GarminRef[]
-  src: 'fedb' | 'garmin'
+  src: 'fedb' | 'garmin' | 'custom'
+  video?: string
 }
 
 export interface GarminExercise {
@@ -45,6 +46,8 @@ export interface Overrides {
   alias: Record<string, string>
   /** exercices de l'historique validés tels quels */
   confirmed: Record<string, true>
+  /** lien vidéo de démonstration ajouté à un mouvement */
+  video: Record<string, string>
 }
 
 export const CAT_META: Record<Movement['cat'], { label: string; color: string }> = {
@@ -65,21 +68,36 @@ export const EQUIP_FR: Record<string, string> = {
 }
 
 export const OVERRIDES_PATH = 'data/library/overrides.json'
-export const EMPTY_OVERRIDES: Overrides = { map: {}, alias: {}, confirmed: {} }
+export const EMPTY_OVERRIDES: Overrides = { map: {}, alias: {}, confirmed: {}, video: {} }
+export const CUSTOM_PATH = 'data/library/custom.json'
 
 export async function loadLibraryData(c: RepoConfig) {
-  const [lib, garmin, garminFr, history, ov] = await Promise.all([
+  const [base, garmin, garminFr, history, ov, custom] = await Promise.all([
     import('../data/library.json').then((m) => m.default as Movement[]),
     import('../data/garmin-exercises.json').then((m) => m.default as GarminExercise[]),
     import('../data/garmin-fr.json').then((m) => m.default as Record<string, string>),
     readJson<Record<string, ExerciseHistory>>(c, 'data/exercises.json', {}),
     readJsonWithSha<Overrides>(c, OVERRIDES_PATH, EMPTY_OVERRIDES),
+    readJsonWithSha<Movement[]>(c, CUSTOM_PATH, []),
   ])
-  return { lib, garmin, garminFr, history, overrides: { ...EMPTY_OVERRIDES, ...ov.data }, sha: ov.sha }
+  const lib = [...custom.data, ...base]
+  return {
+    lib, garmin, garminFr, history,
+    overrides: { ...EMPTY_OVERRIDES, ...ov.data }, sha: ov.sha,
+    custom: custom.data, customSha: custom.sha,
+  }
 }
 
 export async function saveOverrides(c: RepoConfig, o: Overrides, sha: string | null, msg: string) {
   return writeJson(c, OVERRIDES_PATH, o, sha, msg)
+}
+
+export async function saveCustom(c: RepoConfig, list: Movement[], sha: string | null, msg: string) {
+  return writeJson(c, CUSTOM_PATH, list, sha, msg)
+}
+
+export function slugify(s: string) {
+  return fold(s).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
 }
 
 export const garminKey = (c: string, e: string) => `${c}/${e}`
@@ -107,6 +125,7 @@ export function buildReverse(lib: Movement[], o: Overrides): Map<string, Movemen
     const k = garminKey(g.c, g.e)
     // une fiche free-exercise-db n'est proposée d'office que si la correspondance est quasi certaine
     if (m.src === 'fedb' && !g.locked && !g.x) continue
+    if (m.src === 'custom' && !g.locked) continue
     const sc = m.src === 'garmin' ? 1000 : g.locked ? 2000 : g.s
     if (sc > (best.get(k) ?? -1)) {
       best.set(k, sc)

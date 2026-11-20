@@ -29,4 +29,5 @@ npm run dev
 ## Crédits
 
 - Fiches mouvements et images : [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense).
+- Schéma des muscles : [react-body-highlighter](https://github.com/GV79/react-body-highlighter) (MIT).
 - Catalogue d'exercices Garmin extrait de [python-garminconnect](https://github.com/cyberjunky/python-garminconnect) (MIT).

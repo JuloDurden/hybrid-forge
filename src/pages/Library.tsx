@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from 'react'
+import { BodyMap } from '../components/BodyMap'
+import { AnimatedFrames, DemoVideo } from '../components/Media'
 import type { RepoConfig } from '../lib/github'
+import { displayName, otherName, useMovementLang } from '../lib/lang'
 import {
-  buildReverse, CAT_META, effectiveGarmin, EQUIP_FR, fold, garminKey, loadLibraryData, matchBand, saveOverrides,
+  buildReverse, CAT_META, effectiveGarmin, EQUIP_FR, fold, garminKey, loadLibraryData, matchBand, saveCustom, saveOverrides, slugify,
   type ExerciseHistory, type GarminExercise, type Movement, type Overrides,
 } from '../lib/library'
 
 type LibData = Awaited<ReturnType<typeof loadLibraryData>>
-type Selection = { kind: 'movement'; id: string } | { kind: 'history'; key: string } | null
+type Selection = { kind: 'movement'; id: string } | { kind: 'history'; key: string } | { kind: 'new' } | null
 
 const CATS: (Movement['cat'] | 'all')[] = ['all', 'muscu', 'halto', 'gainage', 'wod', 'plyo', 'cardio', 'mobilite']
 const EQUIPS = ['barbell', 'dumbbell', 'kettlebell', 'suspension', 'cable', 'band', 'body', 'medball', 'ezbar']
@@ -36,6 +39,7 @@ export function Library({ config }: { config: RepoConfig }) {
   const [limit, setLimit] = useState(PAGE)
   const [sel, setSel] = useState<Selection>(null)
   const [saving, setSaving] = useState<string | null>(null)
+  const [lang, setLang] = useMovementLang()
 
   useEffect(() => {
     loadLibraryData(config).then(setD).catch((e) => setErr((e as Error).message))
@@ -76,6 +80,22 @@ export function Library({ config }: { config: RepoConfig }) {
     }
   }
 
+  async function addCustom(m: Movement) {
+    if (!d) return
+    setSaving('Enregistrement…')
+    const list = [m, ...d.custom.filter((x) => x.id !== m.id)]
+    try {
+      const customSha = await saveCustom(config, list, d.customSha, `bibliothèque: nouveau mouvement ${m.en}`)
+      setD({ ...d, custom: list, customSha, lib: [m, ...d.lib.filter((x) => x.id !== m.id)] })
+      setSel({ kind: 'movement', id: m.id })
+      setTab('all')
+      setSaving('Mouvement ajouté.')
+      setTimeout(() => setSaving(null), 1800)
+    } catch (e) {
+      setSaving((e as Error).message)
+    }
+  }
+
   if (err) return <div className="notice err">{err}</div>
   if (!d) return <div className="muted">Chargement de la bibliothèque…</div>
 
@@ -88,11 +108,18 @@ export function Library({ config }: { config: RepoConfig }) {
           <div className="overline">{d.lib.length} mouvements · {fedbCount} avec fiche · {d.garmin.length} exercices Garmin</div>
           <h1>Bibliothèque</h1>
         </div>
+        <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+        <div className="seg" role="group" aria-label="Langue des noms">
+          <button aria-pressed={lang === 'fr'} className={lang === 'fr' ? 'on' : ''} onClick={() => setLang('fr')}>FR</button>
+          <button aria-pressed={lang === 'en'} className={lang === 'en' ? 'on' : ''} onClick={() => setLang('en')}>EN</button>
+        </div>
+        <button className="btn" style={{ height: 44 }} onClick={() => setSel({ kind: 'new' })}>+ Nouveau mouvement</button>
         <div className="seg" role="tablist" aria-label="Vue">
           <button role="tab" aria-selected={tab === 'mine'} className={tab === 'mine' ? 'on' : ''} onClick={() => setTab('mine')}>
             Mes mouvements{toReview.length ? <span className="badge">{toReview.length}</span> : null}
           </button>
           <button role="tab" aria-selected={tab === 'all'} className={tab === 'all' ? 'on' : ''} onClick={() => setTab('all')}>Tous les mouvements</button>
+        </div>
         </div>
       </header>
       {saving && <div className="notice">{saving}</div>}
@@ -133,8 +160,8 @@ export function Library({ config }: { config: RepoConfig }) {
                         <span className="small" style={{ fontWeight: 700, color: CAT_META[m.cat].color }}>{CAT_META[m.cat].label.toUpperCase()}</span>
                         <span className="small" style={{ fontWeight: 600, color: band.color }}>{band.label}</span>
                       </div>
-                      <span className="mv-name">{m.name}</span>
-                      {m.name !== m.en && <span className="small muted" style={{ marginTop: -6 }}>{m.en}</span>}
+                      <span className="mv-name">{displayName(m, lang)}</span>
+                      {m.name !== m.en && <span className="small muted" style={{ marginTop: -6 }}>{otherName(m, lang)}</span>}
                       <span className="small muted">{[m.pm.slice(0, 2).join(', '), EQUIP_FR[m.eq] ?? m.eq].filter(Boolean).join(' · ')}</span>
                     </button>
                   )
@@ -155,6 +182,7 @@ export function Library({ config }: { config: RepoConfig }) {
                 : 'Choisis un mouvement pour voir sa fiche et son équivalent Garmin.'}
             </div>
           )}
+          {sel?.kind === 'new' && <NewMovement d={d} onSave={addCustom} onCancel={() => setSel(null)} />}
           {sel?.kind === 'movement' && byId.get(sel.id) && (
             <MovementDetail m={byId.get(sel.id)!} d={d} reverse={reverse} update={update} />
           )}
@@ -170,6 +198,7 @@ export function Library({ config }: { config: RepoConfig }) {
 function MyMovements({ d, rows, reverse, sel, setSel }: {
   d: LibData; rows: [string, ExerciseHistory][]; reverse: Map<string, Movement>; sel: Selection; setSel: (s: Selection) => void
 }) {
+  const [lang] = useMovementLang()
   if (!rows.length) return <div className="empty">Aucune série muscu synchronisée pour l'instant.</div>
   return (
     <div className="cards">
@@ -183,7 +212,7 @@ function MyMovements({ d, rows, reverse, sel, setSel }: {
               <span className="small muted">{h.sessions.length} séance{h.sessions.length > 1 ? 's' : ''} · {fmtDate(h.lastDate)}</span>
               <span className="small" style={{ fontWeight: 600, color: ok ? 'var(--good)' : 'var(--warn)' }}>{ok ? (aliased ? 'Renommé' : 'Validé') : 'À vérifier'}</span>
             </div>
-            <span className="mv-name">{m?.name ?? prettyGarmin(k, d)}</span>
+            <span className="mv-name">{m ? displayName(m, lang) : prettyGarmin(k, d, lang === 'fr')}</span>
             <span className="small muted">
               Garmin : {prettyGarmin(k, d, false)} · {h.bestWeight ? `max ${kg(h.bestWeight[1])} × ${h.bestWeight[0]}` : h.bestReps ? `max ${h.bestReps} reps` : `${h.totalSets} séries`}
             </span>
@@ -253,23 +282,38 @@ function Picker({ items, onPick, initial = '' }: { items: { id: string; label: s
 }
 
 function MovementDetail({ m, d, reverse, update }: { m: Movement; d: LibData; reverse: Map<string, Movement>; update: (f: (o: Overrides) => Overrides, msg: string) => void }) {
+  const [lang] = useMovementLang()
+  const [videoInput, setVideoInput] = useState('')
+  const video = d.overrides.video[m.id] ?? m.video
   const keys = [...reverse.entries()].filter(([, v]) => v.id === m.id).map(([k]) => k).filter((k) => d.history[k])
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <span className="small" style={{ fontWeight: 700, color: CAT_META[m.cat].color }}>{CAT_META[m.cat].label.toUpperCase()} · {(EQUIP_FR[m.eq] ?? m.eq).toUpperCase()}</span>
-        <h2 className="h2">{m.name}</h2>
-        {m.name !== m.en && <span className="small muted">{m.en}</span>}
+        <h2 className="h2">{displayName(m, lang)}</h2>
+        {m.name !== m.en && <span className="small muted">{otherName(m, lang)}</span>}
       </div>
-      {m.img.length > 0 && (
-        <div className="imgs">{m.img.map((src) => <img key={src} src={src} alt={`${m.en}, position`} loading="lazy" />)}</div>
-      )}
+      {video && <DemoVideo url={video} />}
+      {!video && m.img.length > 0 && <AnimatedFrames frames={m.img} alt={`${m.en}, démonstration`} />}
+      {!video && !m.img.length && <div className="empty">Pas d'image pour ce mouvement. Ajoute un lien vidéo ci-dessous (YouTube, fichier vidéo, Instagram…).</div>}
+      <BodyMap primary={m.pm} secondary={m.sm} />
       {(m.pm.length > 0 || m.sm.length > 0) && (
         <div className="row" style={{ flexWrap: 'wrap', gap: 6 }}>
           {m.pm.map((x) => <span key={x} className="mtag strong">{x}</span>)}
           {m.sm.map((x) => <span key={x} className="mtag">{x}</span>)}
         </div>
       )}
+      <form className="row" style={{ gap: 8 }} onSubmit={(e) => {
+        e.preventDefault()
+        const url = videoInput.trim()
+        if (!/^https?:\/\//.test(url)) return
+        setVideoInput('')
+        update((o) => ({ ...o, video: { ...o.video, [m.id]: url } }), `bibliothèque: vidéo pour ${m.en}`)
+      }}>
+        <input className="search" style={{ height: 38 }} type="url" placeholder={video ? 'Remplacer la vidéo (lien)…' : 'Ajouter une vidéo (lien)…'} aria-label="Lien vidéo" value={videoInput} onChange={(e) => setVideoInput(e.target.value)} />
+        <button className="btn ghost sm" type="submit" disabled={!videoInput.trim()}>Ajouter</button>
+        {d.overrides.video[m.id] && <button className="btn ghost sm" type="button" onClick={() => update((o) => { const v = { ...o.video }; delete v[m.id]; return { ...o, video: v } }, `bibliothèque: retire la vidéo de ${m.en}`)}>Retirer</button>}
+      </form>
       <GarminCard m={m} d={d} update={update} />
       {keys.map((k) => <HistoryTable key={k} h={d.history[k]} title={`Mon historique (${prettyGarmin(k, d)})`} />)}
       {m.how.length > 0 && (
@@ -305,10 +349,11 @@ function HistoryDetail({ k, h, d, reverse, update, openMovement }: {
   update: (f: (o: Overrides) => Overrides, msg: string) => void; openMovement: (id: string) => void
 }) {
   const [picking, setPicking] = useState(false)
+  const [lang] = useMovementLang()
   const m = reverse.get(k)
   const aliased = d.overrides.alias[k]
   const confirmed = d.overrides.confirmed[k]
-  const libItems = useMemo(() => d.lib.filter((x) => x.mine).map((x) => ({ id: x.id, label: x.name, sub: x.en })), [d.lib])
+  const libItems = useMemo(() => d.lib.filter((x) => x.mine).map((x) => ({ id: x.id, label: displayName(x, lang), sub: otherName(x, lang) })), [d.lib, lang])
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -319,7 +364,7 @@ function HistoryDetail({ k, h, d, reverse, update, openMovement }: {
       <div className="gcard" style={{ background: '#141416', borderColor: 'var(--border)' }}>
         <span className="small muted" style={{ fontWeight: 600 }}>MOUVEMENT RÉELLEMENT FAIT</span>
         {m ? (
-          <button className="linklike" onClick={() => openMovement(m.id)}>{m.name}{m.name !== m.en ? <span className="small muted"> · {m.en}</span> : null}</button>
+          <button className="linklike" onClick={() => openMovement(m.id)}>{displayName(m, lang)}{m.name !== m.en ? <span className="small muted"> · {otherName(m, lang)}</span> : null}</button>
         ) : <span className="muted small">Pas encore de fiche associée : utilise « En réalité c'est… » pour la relier.</span>}
         <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
           {!confirmed && !aliased && <button className="btn sm" onClick={() => update((o) => ({ ...o, confirmed: { ...o.confirmed, [k]: true } }), `bibliothèque: valide ${k}`)}>C'est bien ça</button>}
@@ -334,5 +379,75 @@ function HistoryDetail({ k, h, d, reverse, update, openMovement }: {
       </div>
       <HistoryTable h={h} title="Historique" />
     </>
+  )
+}
+
+const MUSCLES = ['Pectoraux', 'Épaules', 'Deltoïdes avant', 'Deltoïdes arrière', 'Trapèzes', 'Grand dorsal', 'Milieu du dos', 'Lombaires', 'Biceps', 'Triceps', 'Avant-bras', 'Abdominaux', 'Obliques', 'Fessiers', 'Quadriceps', 'Ischios', 'Adducteurs', 'Abducteurs', 'Mollets', 'Cou']
+
+function NewMovement({ d, onSave, onCancel }: { d: LibData; onSave: (m: Movement) => void; onCancel: () => void }) {
+  const [name, setName] = useState('')
+  const [en, setEn] = useState('')
+  const [cat, setCat] = useState<Movement['cat']>('muscu')
+  const [eq, setEq] = useState('dumbbell')
+  const [pm, setPm] = useState<string[]>([])
+  const [sm, setSm] = useState<string[]>([])
+  const [video, setVideo] = useState('')
+  const [notes, setNotes] = useState('')
+  const [garmin, setGarmin] = useState<GarminExercise | null>(null)
+  const garminItems = useMemo(() => d.garmin.map((x) => ({ id: garminKey(x.category, x.exercise), label: x.name, sub: x.category.replace(/_/g, ' ').toLowerCase() })), [d.garmin])
+  const cycle = (m: string) => {
+    if (pm.includes(m)) { setPm(pm.filter((x) => x !== m)); setSm([...sm, m]) }
+    else if (sm.includes(m)) setSm(sm.filter((x) => x !== m))
+    else setPm([...pm, m])
+  }
+  const valid = (name.trim() || en.trim()) && garmin
+  return (
+    <form style={{ display: 'flex', flexDirection: 'column', gap: 12 }} onSubmit={(e) => {
+      e.preventDefault()
+      if (!valid || !garmin) return
+      const fr = name.trim() || en.trim()
+      const eng = en.trim() || fr
+      onSave({
+        id: `custom:${slugify(eng)}`, name: fr, en: eng, cat, eq, mine: true, pm, sm, lvl: null,
+        how: notes.trim() ? notes.trim().split('\n').filter(Boolean) : [], img: [],
+        g: [{ c: garmin.category, e: garmin.exercise, n: garmin.name, s: 100 }], src: 'custom',
+        ...(video.trim() ? { video: video.trim() } : {}),
+      })
+    }}>
+      <span className="overline">Nouveau mouvement</span>
+      <label className="field">Nom en français<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Serrage dorsal haltères" /></label>
+      <label className="field">Nom en anglais<input value={en} onChange={(e) => setEn(e.target.value)} placeholder="Dumbbell Back Squeeze" /></label>
+      <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}>
+        <label className="field" style={{ flex: 1 }}>Catégorie
+          <select className="select" value={cat} onChange={(e) => setCat(e.target.value as Movement['cat'])}>
+            {Object.entries(CAT_META).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+          </select>
+        </label>
+        <label className="field" style={{ flex: 1 }}>Matériel
+          <select className="select" value={eq} onChange={(e) => setEq(e.target.value)}>
+            {EQUIPS.map((k) => <option key={k} value={k}>{EQUIP_FR[k]}</option>)}
+          </select>
+        </label>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <span className="small muted">Muscles : 1 clic = principal, 2 clics = secondaire, 3 clics = retirer</span>
+        <div className="row" style={{ flexWrap: 'wrap', gap: 6 }}>
+          {MUSCLES.map((m) => (
+            <button type="button" key={m} className={`mtag ${pm.includes(m) ? 'strong' : ''}`} style={{ border: sm.includes(m) ? '1px solid #7dd3fc' : '1px solid transparent', cursor: 'pointer' }} onClick={() => cycle(m)}>{m}</button>
+          ))}
+        </div>
+        <BodyMap primary={pm} secondary={sm} />
+      </div>
+      <label className="field">Lien vidéo (facultatif)<input type="url" value={video} onChange={(e) => setVideo(e.target.value)} placeholder="https://…" /></label>
+      <label className="field">Consignes (une par ligne, facultatif)<textarea className="textarea" rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} /></label>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        <span className="small muted">Équivalent Garmin (obligatoire pour l'envoi sur la montre){garmin ? ` : ${garmin.name}` : ''}</span>
+        <Picker items={garminItems} initial={en.split(' ').slice(-1)[0] ?? ''} onPick={(id) => setGarmin(d.garmin.find((x) => garminKey(x.category, x.exercise) === id) ?? null)} />
+      </div>
+      <div className="row" style={{ gap: 8 }}>
+        <button className="btn" type="submit" disabled={!valid}>Enregistrer</button>
+        <button className="btn ghost" type="button" onClick={onCancel}>Annuler</button>
+      </div>
+    </form>
   )
 }
