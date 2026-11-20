@@ -28,4 +28,5 @@ npm run dev
 
 ## Crédits
 
-Catalogue d'exercices Garmin extrait de [python-garminconnect](https://github.com/cyberjunky/python-garminconnect) (MIT).
+- Fiches mouvements et images : [free-exercise-db](https://github.com/yuhonas/free-exercise-db) (Unlicense).
+- Catalogue d'exercices Garmin extrait de [python-garminconnect](https://github.com/cyberjunky/python-garminconnect) (MIT).

@@ -82,3 +82,37 @@ export async function triggerSync(c: RepoConfig): Promise<boolean> {
   })
   return r.status === 204
 }
+
+function b64encodeUtf8(s: string): string {
+  const bytes = new TextEncoder().encode(s)
+  let bin = ''
+  bytes.forEach((b) => { bin += String.fromCharCode(b) })
+  return btoa(bin)
+}
+
+function b64decodeUtf8(s: string): string {
+  const bin = atob(s.replace(/\n/g, ''))
+  return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)))
+}
+
+/** Lit un JSON avec son sha (nécessaire pour le réécrire). */
+export async function readJsonWithSha<T>(c: RepoConfig, path: string, fallback: T): Promise<{ data: T; sha: string | null }> {
+  const r = await fetch(`${API}/repos/${c.owner}/${c.repo}/contents/${encodeURI(path)}`, { headers: headers(c), cache: 'no-store' })
+  if (r.status === 404) return { data: fallback, sha: null }
+  if (!r.ok) throw new GitHubError(r.status, `Lecture ${path} : erreur ${r.status}`)
+  const j = await r.json()
+  return { data: JSON.parse(b64decodeUtf8(j.content)) as T, sha: j.sha }
+}
+
+/** Écrit un JSON dans le repo (commit). Renvoie le nouveau sha. */
+export async function writeJson(c: RepoConfig, path: string, data: unknown, sha: string | null, message: string): Promise<string> {
+  const r = await fetch(`${API}/repos/${c.owner}/${c.repo}/contents/${encodeURI(path)}`, {
+    method: 'PUT',
+    headers: { ...headers(c), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, content: b64encodeUtf8(JSON.stringify(data, null, 1) + '\n'), ...(sha ? { sha } : {}) }),
+  })
+  if (r.status === 409 || r.status === 422) throw new GitHubError(r.status, 'Le fichier a changé entre-temps : recharge la page et recommence.')
+  if (!r.ok) throw new GitHubError(r.status, `Écriture ${path} : erreur ${r.status}`)
+  const j = await r.json()
+  return j.content.sha as string
+}

@@ -5,7 +5,7 @@ const LINKS = [
   { to: 'resume', label: 'Résumé' },
   { to: 'plan', label: 'Plan & macrocycles', soon: true },
   { to: 'seances', label: 'Séances', soon: true },
-  { to: 'bibliotheque', label: 'Bibliothèque', soon: true },
+  { to: 'bibliotheque', label: 'Bibliothèque' },
   { to: 'wod', label: 'WOD', soon: true },
   { to: 'mobilite', label: 'Mobilité', soon: true },
   { to: 'stats', label: 'Statistiques', soon: true },

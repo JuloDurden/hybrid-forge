@@ -91,3 +91,42 @@ h1 { margin: 0; font-size: 36px; font-weight: 800; letter-spacing: -0.6px; }
 .loadbars .b.cur { background: var(--good); }
 .spark { display: flex; align-items: flex-end; gap: 3px; height: 36px; }
 .spark > div { flex: 1; border-radius: 2px; background: var(--surface-3); }
+
+/* ---------- Bibliothèque ---------- */
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.h2 { margin: 0; font-size: 24px; font-weight: 800; }
+.seg { display: flex; gap: 4px; background: var(--surface); padding: 4px; border-radius: 12px; }
+.seg button { height: 36px; padding: 0 14px; border: none; border-radius: 9px; background: transparent; color: var(--soft); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+.seg button.on { background: var(--text); color: #000; font-weight: 700; }
+.badge { background: var(--warn); color: #000; font-size: 11px; font-weight: 800; border-radius: 999px; padding: 1px 7px; }
+.search { flex: 1 1 320px; height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 14px; }
+.chip { height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--soft); font-size: 13px; font-weight: 600; cursor: pointer; }
+.chip.sm { height: 30px; padding: 0 10px; border-radius: 8px; font-size: 12px; }
+.chip.on { background: var(--text); color: #000; border-color: var(--text); }
+.chip.on-eq { background: #0c4a6e; color: #bae6fd; border-color: #0c4a6e; }
+.toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-left: 8px; }
+.toggle input { accent-color: var(--good); width: 16px; height: 16px; }
+.split { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.list-col { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.detail { flex: 1 1 380px; max-width: 540px; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; }
+@media (max-width: 900px) { .detail { position: static; max-height: none; max-width: none; } }
+.cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.mv { text-align: left; color: var(--text); background: var(--surface); border: 1px solid var(--surface); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; }
+.mv:hover { border-color: var(--surface-3); }
+.mv.sel { border-color: var(--lift); }
+.mv-name { font-size: 15px; font-weight: 700; }
+.gcard { border: 1px solid; border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.stats2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; font-size: 14px; }
+.btn.sm { height: 36px; font-size: 13px; padding: 0 12px; border-radius: 10px; }
+.picker { display: flex; flex-direction: column; max-height: 260px; overflow-y: auto; border-radius: 12px; background: #0e0e10; border: 1px solid var(--border); }
+.picker button { text-align: left; background: transparent; border: none; border-bottom: 1px solid #1f1f22; color: var(--text); padding: 9px 12px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; font-size: 14px; }
+.picker button:hover { background: var(--surface-2); }
+.imgs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.imgs img { width: 100%; border-radius: 12px; background: #fff; aspect-ratio: 4 / 3; object-fit: cover; }
+.mtag { font-size: 12px; padding: 5px 10px; border-radius: 8px; background: var(--surface-2); color: var(--soft); }
+.mtag.strong { background: #0c4a6e; color: #bae6fd; font-weight: 600; }
+.how { margin: 8px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.5; color: var(--soft); display: flex; flex-direction: column; gap: 6px; }
+.hist { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.hist > div { padding: 8px 10px; background: var(--surface-2); border-radius: 10px; gap: 12px; flex-wrap: nowrap; }
+.hist > div > span:last-child { text-align: right; }
+.linklike { background: none; border: none; padding: 0; text-align: left; color: var(--lift); font-size: 17px; font-weight: 700; cursor: pointer; }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Layout } from './components/Layout'
 import { loadAll, type AppData } from './lib/data'
 import { GitHubError, loadConfig, type RepoConfig } from './lib/github'
+import { Library } from './pages/Library'
 import { Settings } from './pages/Settings'
 import { Summary } from './pages/Summary'
 
@@ -44,6 +45,8 @@ export default function App() {
     content = <div className="notice err">{error}</div>
   } else if (!data) {
     content = <div className="muted">Chargement des données…</div>
+  } else if (effectiveRoute === 'bibliotheque') {
+    content = <Library config={config!} />
   } else if (effectiveRoute === 'resume') {
     content = <Summary data={data} config={config!} />
   } else {
