@@ -46,11 +46,27 @@ def clean(s: str) -> str:
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", s))).strip()
 
 
+LIST_TAGS: dict[str, tuple[list[str], list[str]]] = {}
+
+
+def card_tags(body: str) -> None:
+    """Zones et matériel affichés sur chaque carte de la liste (plus fiables que la page détail)."""
+    pos = [(m.start(), m.group(1)) for m in CARD.finditer(body)]
+    for i, (start, slug) in enumerate(pos):
+        end = pos[i + 1][0] if i + 1 < len(pos) else min(len(body), start + 6000)
+        seg = {clean(x) for x in re.findall(r">\s*([^<>]{3,30}?)\s*<", body[start:end])}
+        z = sorted(x for x in ZONES if x in seg)
+        e = sorted(x for x in EQUIP if x in seg)
+        if z and slug not in LIST_TAGS:
+            LIST_TAGS[slug] = (z, e)
+
+
 def list_slugs() -> list[str]:
     slugs: list[str] = []
     for page in range(1, 20):
         url = f"{BASE}/fr/mobility-exercises" + (f"?a58601f4_page={page}" if page > 1 else "")
         body = requests.get(url, headers=UA, timeout=30).text
+        card_tags(body)
         new = [s for s in dict.fromkeys(CARD.findall(body)) if s not in slugs]
         if not new:
             break
@@ -67,11 +83,16 @@ def movement(slug: str) -> dict:
     texts = {clean(x) for x in TAG.findall(body)}
     words = set(re.findall(r">\s*([^<>]{3,30}?)\s*<", body))
     found = {clean(w) for w in words}
+    if slug in LIST_TAGS:
+        zones, equip = LIST_TAGS[slug]
+    else:
+        zones = sorted(z for z in ZONES if z in found or z in texts)
+        equip = sorted(e for e in EQUIP if e in found or e in texts)
     return {
         "slug": slug,
         "name": clean(t.group(1)) if t else slug.replace("-", " ").title(),
-        "zones": sorted(z for z in ZONES if z in found or z in texts),
-        "equipment": sorted(e for e in EQUIP if e in found or e in texts),
+        "zones": zones,
+        "equipment": equip,
         "url": url,
         "youtube": vid,
     }
