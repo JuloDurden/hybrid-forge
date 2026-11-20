@@ -3,16 +3,10 @@
   "slug": "90-to-90",
   "name": "90 to 90",
   "zones": [
-   "Chevilles",
    "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux",
-   "Quadriceps"
+   "Hanches"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/90-to-90",
@@ -22,16 +16,10 @@
   "slug": "active-deep-squat",
   "name": "Active Deep Squat",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
    "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Quadriceps"
+   "Hanches"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/active-deep-squat",
@@ -42,14 +30,7 @@
   "name": "Active V Stretch",
   "zones": [
    "Adducteurs",
-   "Chevilles",
-   "Dorsaux",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Trapèzes",
-   "Épaules"
+   "Ischio-jambiers"
   ],
   "equipment": [
    "Sans équipement"
@@ -61,13 +42,9 @@
   "slug": "alternating-eccentric-calf-activation",
   "name": "Alternating Eccentric Calf Activation",
   "zones": [
-   "Chevilles",
-   "Ischio-jambiers",
-   "Lombaire",
    "Mollets"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/alternating-eccentric-calf-activation",
@@ -78,10 +55,7 @@
   "name": "Alternating High Shin Pull",
   "zones": [
    "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux"
+   "Hanches"
   ],
   "equipment": [
    "Sans équipement"
@@ -93,17 +67,10 @@
   "slug": "alternating-shoulder-flexion",
   "name": "Alternating Shoulder Flexion",
   "zones": [
-   "Biceps",
    "Dorsaux",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux",
-   "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/alternating-shoulder-flexion",
@@ -113,10 +80,7 @@
   "slug": "ankle-mobilization",
   "name": "Ankle Mobilization",
   "zones": [
-   "Chevilles",
-   "Hanches",
-   "Ischio-jambiers",
-   "Mollets"
+   "Chevilles"
   ],
   "equipment": [
    "Sans équipement"
@@ -128,18 +92,11 @@
   "slug": "banded-rotations",
   "name": "Banded Rotations",
   "zones": [
-   "Dorsaux",
-   "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
    "Lombaire",
-   "Quadriceps",
-   "Trapèzes",
-   "Épaules"
+   "Trapèzes"
   ],
   "equipment": [
-   "Bande",
-   "Sans équipement"
+   "Bande"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/banded-rotations",
   "youtube": "VRmDGjgJtww"
@@ -148,18 +105,11 @@
   "slug": "band-pass",
   "name": "Band Pass",
   "zones": [
-   "Dorsaux",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
    "Pectoraux",
-   "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
-   "Sans équipement"
+   "Bande"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/band-pass",
   "youtube": "rkb_lOtTx-U"
@@ -168,18 +118,10 @@
   "slug": "bent-over-locked-rotation",
   "name": "Bent Over Locked Rotation",
   "zones": [
-   "Biceps",
-   "Dorsaux",
-   "Hanches",
-   "Ischio-jambiers",
    "Lombaire",
-   "Pectoraux",
-   "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/bent-over-locked-rotation",
@@ -189,15 +131,10 @@
   "slug": "bottom-squat",
   "name": "Bottom Squat",
   "zones": [
-   "Chevilles",
    "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux"
+   "Hanches"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/bottom-squat",
@@ -207,13 +144,8 @@
   "slug": "bottom-squat-transfer",
   "name": "Bottom Squat Transfer",
   "zones": [
-   "Adducteurs",
    "Chevilles",
-   "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Mollets"
+   "Hanches"
   ],
   "equipment": [
    "Sans équipement"
@@ -225,14 +157,10 @@
   "slug": "calf-roll",
   "name": "Calf Roll",
   "zones": [
-   "Chevilles",
-   "Ischio-jambiers",
-   "Lombaire",
    "Mollets"
   ],
   "equipment": [
-   "Rouleau de massage",
-   "Sans équipement"
+   "Rouleau de massage"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/calf-roll",
   "youtube": "Zr4nzhFQKtA"
@@ -242,13 +170,10 @@
   "name": "Calf Stretch in Downward Dog",
   "zones": [
    "Chevilles",
-   "Hanches",
    "Ischio-jambiers",
-   "Lombaire",
    "Mollets"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/calf-stretch-in-downward-dog",
@@ -259,13 +184,9 @@
   "name": "Calf Stretch On Wall",
   "zones": [
    "Chevilles",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
    "Mollets"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/calf-stretch-on-wall",
@@ -275,18 +196,10 @@
   "slug": "cat-cow",
   "name": "Cat & Cow",
   "zones": [
-   "Dorsaux",
-   "Fessiers",
-   "Hanches",
-   "Ischio-jambiers",
    "Lombaire",
-   "Mollets",
-   "Pectoraux",
-   "Trapèzes",
-   "Épaules"
+   "Trapèzes"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/cat-cow",
@@ -296,18 +209,12 @@
   "slug": "cobra-to-prayer",
   "name": "Cobra to Prayer",
   "zones": [
-   "Biceps",
    "Dorsaux",
-   "Hanches",
    "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Pectoraux",
    "Trapèzes",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/cobra-to-prayer",
@@ -317,15 +224,8 @@
   "slug": "crossed-side-to-side",
   "name": "Crossed Side to Side",
   "zones": [
-   "Dorsaux",
-   "Hanches",
    "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Pectoraux",
-   "Quadriceps",
-   "Trapèzes",
-   "Épaules"
+   "Lombaire"
   ],
   "equipment": [
    "Sans équipement"
@@ -337,17 +237,10 @@
   "slug": "double-external-band-rotations",
   "name": "Double External Band Rotations",
   "zones": [
-   "Biceps",
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Pectoraux",
-   "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
-   "Sans équipement"
+   "Bande"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/double-external-band-rotations",
   "youtube": "UYHCSXax8Qc"
@@ -359,7 +252,6 @@
    "Fléchisseurs"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/forearms-active-stretch",
@@ -372,7 +264,6 @@
    "Fléchisseurs"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/forearms-circle-stretch",
@@ -382,13 +273,10 @@
   "slug": "glute-roll",
   "name": "Glute Roll",
   "zones": [
-   "Fessiers",
-   "Hanches",
-   "Lombaire"
+   "Fessiers"
   ],
   "equipment": [
-   "Rouleau de massage",
-   "Sans équipement"
+   "Rouleau de massage"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/glute-roll",
   "youtube": "vB2SCMJPXp8"
@@ -397,19 +285,11 @@
   "slug": "good-morning-with-band",
   "name": "Good Morning with Band",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
-   "Hanches",
    "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Pectoraux",
-   "Trapèzes",
-   "Épaules"
+   "Lombaire"
   ],
   "equipment": [
-   "Bande",
-   "Sans équipement"
+   "Bande"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/good-morning-with-band",
   "youtube": "UOTmcyLAfA0"
@@ -428,13 +308,9 @@
   "slug": "kang-squat",
   "name": "Kang Squat",
   "zones": [
-   "Chevilles",
-   "Fessiers",
    "Hanches",
    "Ischio-jambiers",
-   "Lombaire",
-   "Quadriceps",
-   "Trapèzes"
+   "Lombaire"
   ],
   "equipment": [
    "Sans équipement"
@@ -446,14 +322,8 @@
   "slug": "leg-swing",
   "name": "Leg Swing",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
    "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Pectoraux",
-   "Quadriceps"
+   "Ischio-jambiers"
   ],
   "equipment": [
    "Sans équipement"
@@ -475,15 +345,10 @@
   "slug": "manual-triceps-stretch",
   "name": "Manual Triceps Stretch",
   "zones": [
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Trapèzes",
    "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/manual-triceps-stretch",
@@ -493,15 +358,10 @@
   "slug": "overhead-activation",
   "name": "Overhead Activation",
   "zones": [
-   "Biceps",
-   "Dorsaux",
-   "Lombaire",
-   "Pectoraux",
    "Trapèzes",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/overhead-activation",
@@ -511,16 +371,11 @@
   "slug": "pigeon",
   "name": "Pigeon",
   "zones": [
-   "Adducteurs",
    "Fessiers",
    "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux",
-   "Quadriceps"
+   "Lombaire"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/pigeon",
@@ -530,13 +385,10 @@
   "slug": "quad-roll",
   "name": "Quad Roll",
   "zones": [
-   "Hanches",
-   "Lombaire",
    "Quadriceps"
   ],
   "equipment": [
-   "Rouleau de massage",
-   "Sans équipement"
+   "Rouleau de massage"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/quad-roll",
   "youtube": "jLx4kGk9x_M"
@@ -545,12 +397,9 @@
   "slug": "quad-stretch",
   "name": "Quad Stretch",
   "zones": [
-   "Hanches",
-   "Lombaire",
    "Quadriceps"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/quad-stretch",
@@ -560,10 +409,7 @@
   "slug": "rainbow-stretch",
   "name": "Rainbow Stretch",
   "zones": [
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Trapèzes",
-   "Épaules"
+   "Dorsaux"
   ],
   "equipment": [
    "Sans équipement"
@@ -577,14 +423,9 @@
   "zones": [
    "Fessiers",
    "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Pectoraux",
-   "Épaules"
+   "Lombaire"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/seated-piriformis-stretch",
@@ -594,17 +435,9 @@
   "slug": "shoulder-flaps",
   "name": "Shoulder Flaps",
   "zones": [
-   "Biceps",
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux",
-   "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/shoulder-flaps",
@@ -614,15 +447,9 @@
   "slug": "shoulders-global",
   "name": "Shoulders Global",
   "zones": [
-   "Biceps",
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Pectoraux",
-   "Trapèzes",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/shoulders-global",
@@ -633,14 +460,10 @@
   "name": "Side to Side Stretch",
   "zones": [
    "Biceps",
-   "Dorsaux",
-   "Lombaire",
    "Pectoraux",
-   "Trapèzes",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/side-to-side-stretch",
@@ -650,19 +473,10 @@
   "slug": "squat-to-stand",
   "name": "Squat to Stand",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
-   "Dorsaux",
-   "Fessiers",
-   "Hanches",
    "Ischio-jambiers",
-   "Lombaire",
-   "Mollets",
-   "Trapèzes",
-   "Épaules"
+   "Lombaire"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/squat-to-stand",
@@ -672,13 +486,8 @@
   "slug": "standing-knight-to-hamstring-stretch",
   "name": "Standing Knight to Hamstring Stretch",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
-   "Fessiers",
    "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux"
+   "Ischio-jambiers"
   ],
   "equipment": [
    "Sans équipement"
@@ -690,17 +499,9 @@
   "slug": "the-bird",
   "name": "The Bird",
   "zones": [
-   "Biceps",
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Pectoraux",
-   "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/the-bird",
@@ -710,17 +511,11 @@
   "slug": "the-breakdancer",
   "name": "The Breakdancer",
   "zones": [
-   "Adducteurs",
-   "Hanches",
    "Ischio-jambiers",
    "Lombaire",
-   "Mollets",
-   "Quadriceps",
-   "Trapèzes"
+   "Mollets"
   ],
   "equipment": [
-   "Bande",
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/the-breakdancer",
@@ -730,18 +525,11 @@
   "slug": "the-knight-stretch",
   "name": "The Knight Stretch",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
-   "Fessiers",
    "Hanches",
-   "Ischio-jambiers",
    "Lombaire",
-   "Quadriceps",
-   "Trapèzes",
-   "Épaules"
+   "Quadriceps"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/the-knight-stretch",
@@ -751,16 +539,10 @@
   "slug": "the-knight-to-hamstring-stretch",
   "name": "The Knight to Hamstring Stretch",
   "zones": [
-   "Adducteurs",
-   "Chevilles",
-   "Fessiers",
    "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
-   "Mollets"
+   "Ischio-jambiers"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/the-knight-to-hamstring-stretch",
@@ -770,16 +552,11 @@
   "slug": "the-prayer-stretch",
   "name": "The Prayer Stretch",
   "zones": [
-   "Biceps",
    "Dorsaux",
-   "Lombaire",
-   "Pectoraux",
    "Trapèzes",
-   "Triceps",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/the-prayer-stretch",
@@ -789,14 +566,9 @@
   "slug": "t-hip-opener",
   "name": "T-Hip Opener",
   "zones": [
-   "Adducteurs",
-   "Biceps",
    "Hanches",
-   "Ischio-jambiers",
    "Lombaire",
-   "Pectoraux",
-   "Trapèzes",
-   "Épaules"
+   "Pectoraux"
   ],
   "equipment": [
    "Sans équipement"
@@ -809,10 +581,8 @@
   "name": "V Sit",
   "zones": [
    "Adducteurs",
-   "Fessiers",
    "Hanches",
-   "Ischio-jambiers",
-   "Lombaire"
+   "Ischio-jambiers"
   ],
   "equipment": [
    "Sans équipement"
@@ -825,13 +595,9 @@
   "name": "Wall Assisted Achilles Stretch",
   "zones": [
    "Chevilles",
-   "Hanches",
-   "Ischio-jambiers",
-   "Lombaire",
    "Mollets"
   ],
   "equipment": [
-   "Rouleau de massage",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/wall-assisted-achilles-stretch",
@@ -842,15 +608,10 @@
   "name": "Wall Assisted Active Arm Stretch",
   "zones": [
    "Biceps",
-   "Dorsaux",
-   "Ischio-jambiers",
-   "Lombaire",
    "Pectoraux",
-   "Trapèzes",
    "Épaules"
   ],
   "equipment": [
-   "Bande",
    "Sans équipement"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/wall-assisted-active-arm-stretch",
@@ -863,8 +624,7 @@
    "Fléchisseurs"
   ],
   "equipment": [
-   "Rouleau de massage",
-   "Sans équipement"
+   "Rouleau de massage"
   ],
   "url": "https://www.gowod.app/fr/mobility-exercises/wall-forearm-roll",
   "youtube": "3ssuVYbEwM8"
