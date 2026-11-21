@@ -24,9 +24,16 @@ export const KIND_COLOR: Record<Kind, string> = { run: 'var(--run)', long: 'var(
 
 // ---------- État (repo privé) ----------
 
+export type SendMode = 'day' | 'week'
+export const SEND_MODES: { id: SendMode; label: string; hint: string }[] = [
+  { id: 'day', label: 'Chaque jour', hint: 'la veille au soir, la séance du lendemain' },
+  { id: 'week', label: 'Chaque semaine', hint: 'le dimanche, toute la semaine suivante' },
+]
+
 export interface Override { date?: string; min?: number; note?: string; mobility?: boolean }
 export interface PlanState {
   active: { planId: string; start: string; paused?: boolean; repeats: number[] } | null
+  sendMode?: SendMode
   pain: Record<string, number>
   gates: { leg?: boolean; doctor?: boolean }
   decisions: Record<string, 'accepted' | 'refused'>
@@ -88,7 +95,10 @@ export function buildCalendar(p: PlanT, st: PlanState, data: AppData) {
       return { id, seq: i, week, t, date, baseDate, status, activity: act, ov, min: ov?.min ?? t.min, note: ov?.note }
     })
     inst.sort((x, y) => x.date.localeCompare(y.date))
-    return { i, n, week, monday: isoDay(monday), end: isoDay(addDays(monday, 6)), inst }
+    const end = isoDay(addDays(monday, 6))
+    const walkMin = Math.round(data.activities.filter((x) => x.start.slice(0, 10) >= isoDay(monday) && x.start.slice(0, 10) <= end && categorize(x, data.profile?.activityRules) === 'walk')
+      .reduce((t, x) => t + (x.durationS ?? 0), 0) / 60)
+    return { i, n, week, monday: isoDay(monday), end, inst, walkMin }
   })
   const cur = Math.max(0, weeks.findIndex((w) => today <= w.end))
   const finished = weeks.length > 0 && today > weeks[weeks.length - 1].end
@@ -114,6 +124,7 @@ export function criteria(w: Calendar['weeks'][number], st: PlanState) {
   const items = [
     { label: 'Séances faites', value: `${done} / ${w.inst.length}`, ok: done >= c.sessions, need: `${c.sessions} mini` },
     { label: 'Douleur max (semaine et lendemain)', value: pain == null ? 'non notée' : `${pain} / 10`, ok: pain == null ? null : pain <= c.pain, need: `≤ ${c.pain}` },
+    { label: 'Marche avec Willow (pour info)', value: `${Math.floor(w.walkMin / 60)} h ${String(w.walkMin % 60).padStart(2, '0')}`, ok: null, need: 'compte dans ta charge' },
     { label: `Courses sous la FC cible`, value: `${runsOk} / ${plannedRuns}`, ok: plannedRuns === 0 ? true : runsOk / plannedRuns >= c.runHr, need: `${Math.ceil(plannedRuns * c.runHr)} mini` },
   ]
   return { items, pass: items.every((x) => x.ok !== false) }
@@ -237,4 +248,31 @@ export function instanceJob(x: Instance) {
 export async function sendJobs(c: RepoConfig, jobs: ReturnType<typeof instanceJob>[]) {
   const stamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14)
   await writeJson(c, `outbox/workouts/${stamp}-plan.json`, { jobs }, null, `plan: envoi de ${jobs.length} séance(s)`)
+}
+
+export function walkMinutes(data: AppData, day: string) {
+  return Math.round(data.activities.filter((a) => a.start.startsWith(day) && categorize(a, data.profile?.activityRules) === 'walk').reduce((t, a) => t + (a.durationS ?? 0), 0) / 60)
+}
+
+// ---------- Calendrier publié pour l'envoi automatique ----------
+
+const hash = (s: string) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36) }
+export const SCHEDULE_PATH = 'data/plans/schedule.json'
+
+export function scheduleOf(st: PlanState, cal: Calendar | null) {
+  const mode: SendMode = st.sendMode ?? 'day'
+  if (!cal || !st.active || st.active.paused) return { mode, jobs: [] }
+  const jobs = cal.weeks.flatMap((w) => w.inst)
+    .filter((x) => x.date >= cal.today && (x.status === 'planned' || x.status === 'today'))
+    .map((x) => { const job = instanceJob(x); return { key: `${st.active!.planId}:${st.active!.start}:${x.id}`, hash: hash(JSON.stringify([x.date, job])), date: x.date, job } })
+  return { mode, jobs }
+}
+
+/** Publie le calendrier si différent de celui du repo (lu juste avant pour avoir le sha à jour). */
+export async function publishSchedule(c: RepoConfig, sched: ReturnType<typeof scheduleOf>) {
+  const cur = await readJsonWithSha<ReturnType<typeof scheduleOf> | null>(c, SCHEDULE_PATH, null)
+  const sig = (x: ReturnType<typeof scheduleOf> | null) => (x ? x.mode + x.jobs.map((j) => j.key + j.hash).join() : '')
+  if (sig(cur.data) === sig(sched)) return false
+  await writeJson(c, SCHEDULE_PATH, sched, cur.sha, `plan: calendrier (${sched.jobs.length} séances, envoi ${sched.mode})`)
+  return true
 }

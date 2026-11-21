@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { addDays, categorize, isoDay, parseDay, type AppData } from '../lib/data'
-import type { RepoConfig } from '../lib/github'
+import { triggerSync, type RepoConfig } from '../lib/github'
 import {
-  buildCalendar, COLOR, criteria, EMPTY, gates, instanceJob, KIND_COLOR, loadState, nextMonday, PLANS, proposals, saveState,
-  sendJobs, type Adjust, type Instance, type PlanState, type PlanT,
+  buildCalendar, COLOR, criteria, EMPTY, gates, KIND_COLOR, loadState, nextMonday, PLANS, proposals, saveState,
+  publishSchedule, scheduleOf, SEND_MODES, walkMinutes, type Adjust, type Instance, type PlanState, type PlanT,
 } from '../lib/plans'
 
 type Tab = 'plan' | 'library' | 'goals'
@@ -60,13 +60,15 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
     if (!st.active || !window.confirm('Arrêter ce plan ? L\'historique est conservé.')) return
     persist({ ...st, active: null, history: [...st.history, { planId: st.active.planId, start: st.active.start, end: today, status: 'arrêté' }] }, 'plan: arrêt', 'Plan arrêté. Tu repasses en séances libres.')
   }
-  async function sendWeek() {
-    if (!cal) return
-    const w = cal.weeks[cal.cur]
-    const todo = w.inst.filter((x) => x.status === 'planned' || x.status === 'today')
-    if (!todo.length) return flash('Plus rien à envoyer cette semaine.')
+  // calendrier publié pour l'envoi automatique : mis à jour dès que le plan ou ses ajustements changent
+  const sched = useMemo(() => (loaded ? scheduleOf(st, cal) : null), [loaded, st, cal])
+  useEffect(() => {
+    if (!sched || (!st.active && !sched.jobs.length && !st.history.length)) return
+    publishSchedule(config, sched).catch((e) => flash((e as Error).message, true))
+  }, [sched, config]) // eslint-disable-line react-hooks/exhaustive-deps
+  async function sendNow() {
     setBusy(true)
-    try { await sendJobs(config, todo.map(instanceJob)); flash(`${todo.length} séance(s) envoyée(s) : elles arrivent sur la 965 d'ici 2 à 3 min, chacune à sa date.`) }
+    try { if (sched) await publishSchedule(config, sched); await triggerSync(config); flash('Synchro lancée : les séances de la période arrivent sur la 965 d\'ici 2 à 3 min.') }
     catch (e) { flash((e as Error).message, true) }
     setBusy(false)
   }
@@ -75,8 +77,9 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
   const strip = useMemo(() => Array.from({ length: 14 }, (_, k) => {
     const d = isoDay(addDays(new Date(), k - 13))
     const cats = data.activities.filter((a) => a.start.startsWith(d)).map((a) => categorize(a, data.profile?.activityRules))
+    const walk = cats.includes('walk')
     const c = cats.includes('run') ? 'run' : cats.includes('wod') ? 'wod' : cats.includes('strength') ? 'strength' : cats.includes('mobility') || cats.includes('warmup') ? 'mobility' : ''
-    return { d, c }
+    return { d, c, walk }
   }), [data])
   const counts = strip.reduce<Record<string, number>>((m, x) => { if (x.c) m[x.c] = (m[x.c] ?? 0) + 1; return m }, {})
   const SC: Record<string, string> = { run: 'var(--run)', wod: 'var(--wod)', strength: 'var(--lift)', mobility: 'var(--mobility)', '': 'var(--surface-3)' }
@@ -103,10 +106,10 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
             <div className="between"><span className="overline">Aucun plan actif</span><span className="pill">Séances libres</span></div>
             <h2 style={{ margin: 0, fontSize: 26 }}>Tu t'entraînes librement</h2>
             <span className="muted small">L'app suit ce que tu fais (Garmin et Apple Watch) sans rien imposer. Les 14 derniers jours :</span>
-            <div className="plan-strip">{strip.map((x) => <div key={x.d} title={x.d}><i style={{ background: SC[x.c] }} /><span>{'DLMMJVS'[parseDay(x.d).getDay()]}</span></div>)}</div>
+            <div className="plan-strip">{strip.map((x) => <div key={x.d} title={x.d}><i style={{ background: SC[x.c] }} /><b style={{ background: x.walk ? 'var(--walk)' : 'transparent' }} /><span>{'DLMMJVS'[parseDay(x.d).getDay()]}</span></div>)}</div>
             <div className="small muted" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <span><b style={{ color: 'var(--mobility)' }}>●</b> Mobilité · {counts.mobility ?? 0}</span><span><b style={{ color: 'var(--wod)' }}>●</b> WOD · {counts.wod ?? 0}</span>
-              <span><b style={{ color: 'var(--run)' }}>●</b> Course · {counts.run ?? 0}</span><span><b style={{ color: 'var(--lift)' }}>●</b> Muscu · {counts.strength ?? 0}</span>
+              <span><b style={{ color: 'var(--run)' }}>●</b> Course · {counts.run ?? 0}</span><span><b style={{ color: 'var(--lift)' }}>●</b> Muscu · {counts.strength ?? 0}</span><span><b style={{ color: 'var(--walk)' }}>●</b> Marche avec Willow · {strip.filter((x) => x.walk).length} j</span>
             </div>
             <div className="pain-row"><span>Douleur sciatique aujourd'hui</span><PainPicker value={st.pain[today]} onPick={setPain} /></div>
             <span className="muted small">Note de 0 à 10, en 2 secondes. Elle sert à juger quand reprendre, puis à adapter le plan.</span>
@@ -173,7 +176,11 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
               <section className="card" style={{ flex: '3 1 520px', gap: 10 }}>
                 <div className="between" style={{ flexWrap: 'wrap', gap: 10 }}>
                   <span className="overline">Semaine {cal.cur + 1} · {fmtDate(w.monday, { day: 'numeric', month: 'short' })} → {fmtDate(w.end, { day: 'numeric', month: 'short' })}</span>
-                  <button className="btn sm" disabled={busy} onClick={sendWeek}>{busy ? 'Envoi…' : '⌚ Envoyer la semaine à la 965'}</button>
+                  <div className="send-mode">
+                    <span className="muted small">⌚ Envoi sur la 965</span>
+                    <div className="seg">{SEND_MODES.map((m) => <button key={m.id} title={m.hint} className={(st.sendMode ?? 'day') === m.id ? 'on' : ''} onClick={() => persist({ ...st, sendMode: m.id }, `plan: envoi ${m.id}`, `Envoi : ${m.label.toLowerCase()} (${m.hint}).`)}>{m.label}</button>)}</div>
+                    <button className="btn ghost sm" disabled={busy} onClick={sendNow}>{busy ? '…' : 'Envoyer maintenant'}</button>
+                  </div>
                 </div>
                 {w.inst.map((x) => {
                   const [c, l] = ST_LABEL[x.status]
@@ -186,6 +193,7 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
                         <strong>{title}{x.t.key && <span className="plan-key" title="Séance clé">clé</span>}</strong>
                         <span className="muted small">{x.ov?.mobility ? `remplace « ${x.t.title} »` : x.t.detail}{x.min !== x.t.min ? ` · raccourcie à ${x.min}'` : ''}{x.ov?.date ? ` · déplacée du ${fmtDate(x.baseDate)}` : ''}</span>
                         {x.note && <span className="small" style={{ color: 'var(--warn)' }}>{x.note}</span>}
+                        {walkMinutes(data, x.date) > 0 && <span className="small" style={{ color: 'var(--walk)' }}>+ {walkMinutes(data, x.date)}' de marche avec Willow</span>}
                       </div>
                       <span className="small" style={{ color: c, whiteSpace: 'nowrap', fontWeight: 700 }}>{l}{x.activity?.avgHR && x.t.run ? ` · FC ${x.activity.avgHR}` : ''}</span>
                     </div>

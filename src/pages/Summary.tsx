@@ -55,12 +55,13 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
   const weekActs = data.activities.filter((a) => a.start.slice(0, 10) >= weekStart && a.start.slice(0, 10) <= weekEnd)
   const weekSessions = sessionsOf(weekActs, rules)
   const count = (c: Session['category']) => weekSessions.filter((s) => s.category === c).length
+  const walkMin = Math.round(weekSessions.filter((s) => s.category === 'walk').reduce((t, s) => t + s.durationS, 0) / 60)
   const runMin = Math.round(weekSessions.filter((s) => s.category === 'run').reduce((t, s) => t + s.durationS, 0) / 60)
   const ringData = (['run', 'strength', 'wod', 'mobility'] as const).map((c) => ({ c, n: count(c), target: RING_TARGETS[c] }))
 
   // ---- Séance du jour
   const todayPlanned = data.calendar.filter((c) => c.date === today)
-  const todayDone = sessionsOf(weekActs.filter((a) => a.start.startsWith(today)), rules).filter((s) => s.category !== 'warmup')
+  const todayDone = sessionsOf(weekActs.filter((a) => a.start.startsWith(today)), rules).filter((s) => s.category !== 'warmup' && s.category !== 'walk')
 
   // ---- Charge 6 semaines
   const weeks = Array.from({ length: 6 }, (_, i) => {
@@ -75,7 +76,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
   const loadMax = Math.max(1, ...weeks.map((w) => w.load))
 
   // ---- Dernières séances
-  const recent = sessionsOf(data.activities.slice(0, 60), rules).filter((s) => s.category !== 'warmup').reverse().slice(0, 5)
+  const recent = sessionsOf(data.activities.slice(0, 120), rules).filter((s) => s.category !== 'warmup' && s.category !== 'walk').reverse().slice(0, 5)
 
   async function sync() {
     setSyncMsg('Envoi…')
@@ -149,7 +150,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
             </div>
           ))}
           {!todayDone.length && !todayPlanned.length && (
-            <div className="empty">Rien de planifié aujourd'hui dans le calendrier Garmin. Le générateur de séances arrivera avec l'écran Plan.</div>
+            <div className="empty">Rien de planifié aujourd'hui dans le calendrier Garmin.</div>
           )}
         </section>
 
@@ -168,9 +169,13 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
                   <span style={{ fontSize: 15, fontWeight: 700 }}>{r.n}/{r.target}{r.c === 'run' && runMin ? ` · ${runMin}'` : ''}</span>
                 </div>
               ))}
+              <div className="between">
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--walk)' }}>Marche avec Willow</span>
+                <span style={{ fontSize: 15, fontWeight: 700 }}>{Math.floor(walkMin / 60)} h {String(walkMin % 60).padStart(2, '0')}</span>
+              </div>
             </div>
           </div>
-          <span className="small muted">Garmin + Apple Watch (doublons écartés). Balades exclues, blocs échauffement / cooldown regroupés avec leur séance.</span>
+          <span className="small muted">Garmin + Apple Watch (doublons écartés). Blocs échauffement / cooldown regroupés avec leur séance.</span>
         </section>
       </div>
 
@@ -181,7 +186,9 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
           {Array.from({ length: 7 }, (_, i) => {
             const d = addDays(monday, i)
             const ds = isoDay(d)
-            const sess = sessionsOf(weekActs.filter((a) => a.start.startsWith(ds)), rules).filter((s) => s.category !== 'warmup')
+            const all = sessionsOf(weekActs.filter((a) => a.start.startsWith(ds)), rules)
+            const sess = all.filter((s) => s.category !== 'warmup' && s.category !== 'walk')
+            const walk = Math.round(all.filter((s) => s.category === 'walk').reduce((t, s) => t + s.durationS, 0) / 60)
             const planned = data.calendar.filter((c) => c.date === ds)
             if (i >= 5 && !sess.length && !planned.length) return null
             return (
@@ -201,6 +208,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
                   <div key={`${p.workoutId}`} className="row" style={{ gap: 8 }}><span className="dot" style={{ background: 'var(--surface-3)' }} /><span style={{ fontSize: 14 }}>{p.name}</span></div>
                 ))}
                 {!sess.length && !planned.length && <span className="small muted">Repos</span>}
+                {walk > 0 && <span className="small" style={{ color: 'var(--walk)' }}>+ {walk}' de marche avec Willow</span>}
                 {sess.length > 0 && <span className="tag">{[...new Set(sess.flatMap((x) => x.activities.map((a) => (a.source === 'healthfit' ? 'Apple Watch' : 'Garmin'))))].join(' + ')}</span>}
               </div>
             )
@@ -256,7 +264,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
               </div>
             ))}
           </div>
-          <span className="small muted">Somme de la charge Garmin des séances (hors balades).</span>
+          <span className="small muted">Somme de la charge Garmin des séances, balades avec Willow comprises.</span>
         </section>
 
         {/* Dernières séances */}

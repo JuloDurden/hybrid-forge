@@ -104,7 +104,7 @@ export async function loadAll(c: RepoConfig): Promise<AppData> {
 
 // ---------- Catégories ----------
 
-export type Category = 'run' | 'strength' | 'wod' | 'mobility' | 'warmup' | 'other'
+export type Category = 'run' | 'strength' | 'wod' | 'mobility' | 'warmup' | 'walk' | 'other'
 
 export const CATEGORY_META: Record<Category, { label: string; color: string }> = {
   run: { label: 'Course', color: 'var(--run)' },
@@ -112,11 +112,13 @@ export const CATEGORY_META: Record<Category, { label: string; color: string }> =
   wod: { label: 'WOD', color: 'var(--wod)' },
   mobility: { label: 'Mobilité', color: 'var(--mobility)' },
   warmup: { label: 'Échauffement', color: 'var(--muted)' },
+  walk: { label: 'Marche', color: 'var(--walk)' },
   other: { label: 'Autre', color: 'var(--muted)' },
 }
 
 const RUN_TYPES = new Set(['running', 'treadmill_running', 'trail_running', 'track_running', 'virtual_run', 'indoor_running'])
 const MOBILITY_TYPES = new Set(['yoga', 'pilates', 'breathwork', 'mobility', 'flexibility'])
+const WALK_TYPES = new Set(['walking', 'casual_walking', 'speed_walking', 'hiking'])
 const STRENGTH_TYPES = new Set(['strength_training', 'indoor_cardio', 'fitness_equipment'])
 
 const DEFAULT_RULES: Profile['activityRules'] = {
@@ -129,6 +131,7 @@ const DEFAULT_RULES: Profile['activityRules'] = {
 export function categorize(a: Activity, rules: Profile['activityRules'] = DEFAULT_RULES): Category {
   const name = ` ${(a.name || '').toLowerCase()} `
   const has = (ps: string[]) => ps.some((p) => name.includes(p))
+  if (WALK_TYPES.has(a.type)) return 'walk'
   if (RUN_TYPES.has(a.type)) return has(rules.wodNamePatterns) ? 'wod' : 'run'
   if (MOBILITY_TYPES.has(a.type)) return 'mobility'
   if (a.type === 'hiit') return 'wod'
@@ -210,7 +213,7 @@ export function sessionsOf(acts: Activity[], rules?: Profile['activityRules']): 
     if (cat === 'other') continue
     const t = new Date(a.start.replace(' ', 'T')).getTime()
     const sameDay = cur && cur.start.slice(0, 10) === a.start.slice(0, 10)
-    if (cur && sameDay && t - lastEnd < 20 * 60000) {
+    if (cur && sameDay && t - lastEnd < 20 * 60000 && cat !== 'walk' && cur.category !== 'walk') {
       cur.activities.push(a)
       cur.durationS += a.durationS || 0
       cur.load += a.load || 0
