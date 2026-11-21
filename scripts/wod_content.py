@@ -82,6 +82,17 @@ M = {
     "bike-cal": dict(fr="Vélo (calories)", en="Bike (calories)", alias=["calorie (air |assault |echo )?bike", "cal(orie)? bike"], garmin="INDOOR_BIKE/AIR_BIKE", unit="cal", sub={"my": ("run", 10), "sc": ("run", 8)}),
     "ski-cal": dict(fr="SkiErg (calories)", en="Ski (calories)", alias=["calorie ski", "cal(orie)? ski(erg)?"], garmin="CARDIO/CARDIO", unit="cal", sub={"my": ("run", 12), "sc": ("run", 10)}),
     "rest": dict(fr="Repos", en="Rest", alias=["rest"], garmin="", unit="s"),
+    # --- renforcement (plans)
+    "glute-bridge": dict(fr="Pont fessier", en="Glute bridge", alias=["glute bridges?", "hip bridges?"], garmin="HIP_RAISE/HIP_RAISE"),
+    "bird-dog": dict(fr="Bird dog", en="Bird dog", alias=["bird[- ]dogs?"], garmin="HIP_STABILITY/QUADRUPED_WITH_LEG_LIFT"),
+    "scap-pull": dict(fr="Tirage scapulaire suspendu", en="Scap pull-up", alias=["scap(ular)? pull[- ]ups?"], garmin="SHRUG/SCAPULAR_RETRACTION"),
+    "negative-pull-up": dict(fr="Traction négative (5 s)", en="Negative pull-up", alias=["negative pull[- ]ups?"], garmin="PULL_UP/PULL_UP"),
+    "dead-hang": dict(fr="Suspension à la barre", en="Dead hang", alias=["dead hangs?"], garmin="PULL_UP/PULL_UP", unit="s"),
+    "db-rdl": dict(fr="Soulevé jambes tendues haltères", en="Dumbbell Romanian deadlift", alias=["dumbbell (romanian|stiff[- ]leg(ged)?) deadlifts?", "db rdls?"], garmin="DEADLIFT/DUMBBELL_STRAIGHT_LEG_DEADLIFT", load="db", rx=22.5, my=17.5, sc=12.5),
+    "db-row": dict(fr="Rowing haltère", en="Dumbbell row", alias=["dumbbell rows?"], garmin="ROW/DUMBBELL_ROW", load="db", rx=22.5, my=22.5, sc=15),
+    "db-bench": dict(fr="Développé couché haltères", en="Dumbbell bench press", alias=["dumbbell bench press(es)?"], garmin="BENCH_PRESS/DUMBBELL_BENCH_PRESS", load="db", rx=22.5, my=20, sc=15),
+    "reverse-lunge": dict(fr="Fente arrière haltères", en="Dumbbell reverse lunge", alias=["(dumbbell )?reverse lunges?"], garmin="LUNGE/DUMBBELL_REVERSE_LUNGE", load="db", rx=22.5, my=12.5, sc=10),
+    "face-pull": dict(fr="Face pull TRX", en="Suspension face pull", alias=["face pulls?"], garmin="SUSPENSION/FACE_PULL"),
 }
 
 # Benchmarks : format + paramètres ; reps None = schéma de la séance (21-15-9…)

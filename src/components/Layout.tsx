@@ -3,7 +3,7 @@ import { relativeTime } from '../lib/data'
 
 const LINKS = [
   { to: 'resume', label: 'Résumé' },
-  { to: 'plan', label: 'Plan & macrocycles', soon: true },
+  { to: 'plan', label: 'Plans' },
   { to: 'seances', label: 'Séances', soon: true },
   { to: 'bibliotheque', label: 'Bibliothèque' },
   { to: 'wod', label: 'WOD' },

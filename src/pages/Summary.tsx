@@ -215,7 +215,9 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
           {(data.profile?.goals ?? []).map((g) => {
             let pct = 0
             let right = ''
-            if (g.metric === 'halfMarathonS') {
+            if (g.metric === 'halfMarathonS' && !g.target) {
+              right = 'repoussé · date à fixer'
+            } else if (g.metric === 'halfMarathonS') {
               const m = data.profile?.goals.find((x) => x.id === g.id)?.milestone
               const target = g.target ? parseDay(`${g.target}-15`) : null
               const wk = target ? Math.max(0, Math.round((target.getTime() - now.getTime()) / (7 * 86400000))) : null

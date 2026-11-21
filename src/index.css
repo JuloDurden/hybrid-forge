@@ -311,3 +311,45 @@ select.fpill { padding-right: 28px; background-image: url("data:image/svg+xml,%3
 .cf-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; align-items: start; }
 .cf-card.rest { opacity: 0.55; }
 .cf-text { white-space: pre-wrap; font-family: inherit; font-size: 14px; line-height: 1.55; margin: 0; color: var(--soft); }
+
+/* ---------- Plans ---------- */
+.plans { display: flex; flex-direction: column; gap: 18px; }
+.chip { font-size: 12px; color: var(--muted); border: 1px solid var(--surface-3); border-radius: 999px; padding: 3px 9px; }
+.plan-strip { display: flex; gap: 8px; flex-wrap: wrap; }
+.plan-strip > div { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.plan-strip i { width: 30px; height: 30px; border-radius: 9px; display: block; }
+.plan-strip span { font-size: 11px; color: var(--muted); }
+.pain-row { display: flex; gap: 12px; align-items: center; background: #111114; border-radius: 16px; padding: 12px 14px; flex-wrap: wrap; font-size: 14px; }
+.pain-row > span { flex: 1; min-width: 200px; }
+.pain { display: flex; gap: 4px; flex-wrap: wrap; }
+.pain button { width: 30px; height: 30px; border-radius: 8px; border: none; background: var(--surface-3); color: var(--soft); font-weight: 700; font-size: 13px; cursor: pointer; }
+.pain button.on { color: #000; }
+.plan-ready { border: 1px solid #3f5f13; background: radial-gradient(circle at 90% 0%, #2b3a12 0%, var(--surface) 55%); }
+.gates { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.gates li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--soft); }
+.gates em { font-style: normal; font-size: 12px; }
+.gate { width: 22px; height: 22px; flex-shrink: 0; border-radius: 6px; border: 2px solid var(--surface-3); background: transparent; color: #000; font-weight: 900; font-size: 13px; cursor: pointer; padding: 0; }
+.gate.on { background: var(--mobility); border-color: var(--mobility); }
+.gate:disabled { cursor: default; }
+.plan-weeks { display: flex; gap: 10px; align-items: flex-end; overflow-x: auto; }
+.plan-weeks > div { flex: 1 1 0; min-width: 76px; display: flex; flex-direction: column; gap: 6px; }
+.plan-wbar { height: 64px; border-radius: 10px; background: #111114; position: relative; overflow: hidden; border: 1px solid var(--surface-3); }
+.plan-weeks .cur .plan-wbar { border: 2px solid var(--text); }
+.plan-wbar i { position: absolute; left: 0; right: 0; bottom: 0; opacity: .85; }
+.plan-day { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: #111114; }
+.plan-day.today { background: var(--surface-2); outline: 1px solid var(--surface-3); }
+.plan-day.missed strong { text-decoration: line-through; color: var(--muted); }
+.plan-date { width: 58px; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: capitalize; }
+.plan-kind { width: 6px; align-self: stretch; border-radius: 3px; flex-shrink: 0; }
+.plan-key { margin-left: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--muted); border: 1px solid var(--surface-3); border-radius: 6px; padding: 1px 5px; vertical-align: middle; }
+.plan-crit { background: #111114; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.plan-crit em { font-style: normal; }
+.adj { background: var(--surface); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 8px; border-left: 4px solid; }
+.adj-change { font-size: 14px; line-height: 1.5; background: #111114; border-radius: 10px; padding: 10px 12px; }
+.plan-card { background: var(--surface); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 10px; text-align: left; color: var(--text); font-family: inherit; cursor: pointer; border: 1px solid transparent; min-height: 230px; }
+.plan-card:hover { border-color: var(--surface-3); }
+.plan-card i { width: 10px; height: 10px; border-radius: 5px; display: block; }
+.plan-card strong { font-size: 20px; }
+.plan-week-detail { background: var(--surface-2); border-radius: 14px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.plan-sess { display: flex; gap: 10px; align-items: center; }
+.plan-sess .plan-kind { height: 28px; align-self: center; }
