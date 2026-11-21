@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { addDays, categorize, isoDay, parseDay, type AppData } from '../lib/data'
 import { triggerSync, type RepoConfig } from '../lib/github'
+import { loadFeel, type Feel } from '../lib/sessions'
 import {
   buildCalendar, COLOR, criteria, EMPTY, gates, KIND_COLOR, loadState, nextMonday, PLANS, proposals, saveState,
   publishSchedule, scheduleOf, SEND_MODES, walkMinutes, type Adjust, type Instance, type PlanState, type PlanT,
@@ -33,9 +34,11 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
   const [msg, setMsg] = useState<{ t: string; err?: boolean } | null>(null)
   const [view, setView] = useState<PlanT | null>(null)
   const [busy, setBusy] = useState(false)
+  const [feel, setFeel] = useState<Record<string, Feel>>({})
   const today = isoDay(new Date())
 
   useEffect(() => { loadState(config).then((r) => { setSt({ ...EMPTY, ...r.data }); sha.current = r.sha; setLoaded(true) }).catch((e) => { setMsg({ t: (e as Error).message, err: true }); setLoaded(true) }) }, [config])
+  useEffect(() => { loadFeel(config).then((r) => setFeel(r.data)).catch(() => {}) }, [config])
   const flash = (t: string, err = false) => { setMsg({ t, err }); setTimeout(() => setMsg(null), 5000) }
 
   async function persist(next: PlanState, m: string, ok?: string) {
@@ -46,9 +49,15 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
   }
 
   const plan = st.active ? PLANS.find((p) => p.id === st.active!.planId) ?? null : null
-  const cal = useMemo(() => (plan && st.active ? buildCalendar(plan, st, data) : null), [plan, st, data])
-  const props = useMemo(() => (plan && cal && !st.active?.paused ? proposals(plan, st, cal, data) : []), [plan, cal, st, data])
-  const g = useMemo(() => gates(st, data), [st, data])
+  // douleur notée sur les séances (écran Séances) : prise en compte au jour de la séance
+  const stView = useMemo(() => {
+    const pain = { ...st.pain }
+    for (const a of data.activities) { const f = feel[String(a.id)]; const d = a.start.slice(0, 10); if (f?.pain != null) pain[d] = Math.max(pain[d] ?? 0, f.pain) }
+    return { ...st, pain }
+  }, [st, feel, data])
+  const cal = useMemo(() => (plan && st.active ? buildCalendar(plan, stView, data) : null), [plan, st, stView, data])
+  const props = useMemo(() => (plan && cal && !st.active?.paused ? proposals(plan, stView, cal, data) : []), [plan, cal, st, data])
+  const g = useMemo(() => gates(stView, data), [stView, data])
 
   const setPain = (n: number) => persist({ ...st, pain: { ...st.pain, [today]: n } }, `douleur ${today}: ${n}`)
   const decide = (a: Adjust, ok: boolean) => {
@@ -138,7 +147,7 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
 
       {tab === 'plan' && plan && cal && (() => {
         const w = cal.weeks[cal.cur]
-        const crit = criteria(w, st)
+        const crit = criteria(w, stView)
         const done = cal.weeks.flatMap((x) => x.inst).filter((x) => x.status === 'ok' || x.status === 'warn').length
         const planned = cal.weeks.slice(0, cal.cur + 1).reduce((n, x) => n + x.inst.length, 0)
         return (
@@ -159,7 +168,7 @@ export function Plans({ config, data }: { config: RepoConfig; data: AppData }) {
                 {cal.weeks.map((x) => {
                   const d = x.inst.filter((i) => i.status === 'ok' || i.status === 'warn').length
                   const past = x.end < today
-                  const color = x.i === cal.cur ? 'var(--run)' : past ? (criteria(x, st).pass ? 'var(--mobility)' : 'var(--warn)') : 'var(--surface-3)'
+                  const color = x.i === cal.cur ? 'var(--run)' : past ? (criteria(x, stView).pass ? 'var(--mobility)' : 'var(--warn)') : 'var(--surface-3)'
                   const ph = plan.phases?.find((p) => p.weeks.includes(x.n))
                   return (
                     <div key={x.i} className={x.i === cal.cur ? 'cur' : ''}>

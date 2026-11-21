@@ -6,6 +6,7 @@ import { Library } from './pages/Library'
 import { Mobility } from './pages/Mobility'
 import { WodPage } from './pages/Wod'
 import { Plans } from './pages/Plans'
+import { Sessions } from './pages/Sessions'
 import { Settings } from './pages/Settings'
 import { Summary } from './pages/Summary'
 
@@ -50,6 +51,8 @@ export default function App() {
     content = <div className="muted">Chargement des données…</div>
   } else if (effectiveRoute === 'bibliotheque') {
     content = <Library config={config!} />
+  } else if (effectiveRoute === 'seances') {
+    content = <Sessions config={config!} data={data} />
   } else if (effectiveRoute === 'plan') {
     content = <Plans config={config!} data={data} />
   } else if (effectiveRoute === 'wod') {

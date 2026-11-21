@@ -4,7 +4,7 @@ import { relativeTime } from '../lib/data'
 const LINKS = [
   { to: 'resume', label: 'Résumé' },
   { to: 'plan', label: 'Plans' },
-  { to: 'seances', label: 'Séances', soon: true },
+  { to: 'seances', label: 'Séances' },
   { to: 'bibliotheque', label: 'Bibliothèque' },
   { to: 'wod', label: 'WOD' },
   { to: 'mobilite', label: 'Mobilité' },

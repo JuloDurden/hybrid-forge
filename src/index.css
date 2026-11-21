@@ -357,3 +357,36 @@ select.fpill { padding-right: 28px; background-image: url("data:image/svg+xml,%3
 .plan-strip b { width: 18px; height: 3px; border-radius: 2px; display: block; }
 .send-mode { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .send-mode .seg button { padding: 6px 10px; font-size: 12px; }
+
+/* ---------- Séances ---------- */
+.sess { display: flex; flex-direction: column; gap: 18px; }
+.fchip { font-size: 13px; font-weight: 700; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--surface-3); background: transparent; color: var(--text); cursor: pointer; font-family: inherit; }
+.fchip.on { background: var(--text); color: #000; border-color: var(--text); }
+.sess-head { display: flex; gap: 14px; padding: 0 14px; font-size: 11px; font-weight: 800; letter-spacing: .8px; color: var(--muted); text-transform: uppercase; }
+.sess-head span:not(:first-child), .sess-num { width: 70px; text-align: right; flex-shrink: 0; }
+.sess-head .sm, .sess-num.sm { width: 48px; }
+.sess-row { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 14px; background: #111114; border: 1px solid transparent; color: var(--text); text-align: left; cursor: pointer; font-family: inherit; }
+.sess-row:hover { border-color: var(--surface-3); }
+.sess-row strong { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sess-date { width: 62px; font-size: 13px; font-weight: 700; color: var(--muted); text-transform: capitalize; flex-shrink: 0; }
+.sess-num { font-size: 14px; font-weight: 700; }
+.sess-walks { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; border: 1px dashed var(--border); font-size: 13px; color: var(--muted); }
+.sess-walks i { width: 10px; height: 10px; border-radius: 5px; background: var(--walk); }
+.sess-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.sess-kpis div { display: flex; flex-direction: column; gap: 2px; }
+.sess-kpis strong { font-size: 22px; }
+.sess-kpis span { font-size: 12px; color: var(--muted); }
+.sess-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.sess-cal .h { font-size: 11px; color: var(--muted); text-align: center; }
+.sess-cal button { aspect-ratio: 1; border-radius: 8px; border: none; background: #111114; color: #52525b; font-size: 11px; font-weight: 700; cursor: pointer; position: relative; font-family: inherit; }
+.sess-cal button:disabled { cursor: default; }
+.sess-cal sup { position: absolute; top: 2px; right: 4px; font-size: 9px; }
+.sess-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; }
+.sess-stats div { display: flex; flex-direction: column; gap: 2px; }
+.sess-stats strong { font-size: 24px; }
+.sess-ex { display: grid; grid-template-columns: minmax(180px, 1.3fr) 2fr 90px 130px; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; background: #111114; }
+@media (max-width: 900px) { .sess-ex { grid-template-columns: 1fr; } }
+.sess-sets { display: flex; gap: 6px; flex-wrap: wrap; }
+.sess-sets span { font-size: 13px; font-weight: 600; padding: 5px 9px; border-radius: 8px; background: var(--surface); }
+.zbar { display: flex; border-radius: 7px; overflow: hidden; gap: 2px; height: 14px; }
+.zbar i { display: block; }
