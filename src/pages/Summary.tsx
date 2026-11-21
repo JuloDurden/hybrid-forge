@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { buildCalendar, loadState, PLANS, type PlanState } from '../lib/plans'
 import { Rings, ScoreRing } from '../components/Ring'
 import {
   addDays, CATEGORY_META, categorize, currentMacro, DAY_SHORT, formatDuration, isoDay, mondayOf,
@@ -31,6 +32,16 @@ function latestWith(health: Record<string, HealthDay>, key: keyof HealthDay, tod
 
 export function Summary({ data, config }: { data: AppData; config: RepoConfig }) {
   const [syncMsg, setSyncMsg] = useState<string | null>(null)
+  const [planSt, setPlanSt] = useState<PlanState | null>(null)
+  useEffect(() => { loadState(config).then((r) => setPlanSt(r.data)).catch(() => setPlanSt(null)) }, [config])
+  const activePlan = planSt?.active ? PLANS.find((p) => p.id === planSt.active!.planId) : null
+  const planBadge = (() => {
+    if (!planSt) return null
+    if (!activePlan) return 'Séances libres'
+    const cal = buildCalendar(activePlan, planSt, data)
+    if (planSt.active!.start > isoDay(new Date())) return `${activePlan.name} · démarre le ${parseDay(planSt.active!.start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`
+    return `${activePlan.name} · S${cal.cur + 1}/${cal.weeks.length}${planSt.active!.paused ? ' · en pause' : ''}`
+  })()
   const now = new Date()
   const today = isoDay(now)
   const rules = data.profile?.activityRules
@@ -70,8 +81,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
     const load = data.activities
       .filter((a) => a.start.slice(0, 10) >= s && a.start.slice(0, 10) <= e && categorize(a, rules) !== 'other')
       .reduce((t, a) => t + (a.load || 0), 0)
-    const mc = currentMacro(data.profile, m)
-    return { label: mc ? `W${mc.week}` : `${m.getDate()}/${m.getMonth() + 1}`, load: Math.round(load), cur: i === 5 }
+    return { label: `${m.getDate()}/${m.getMonth() + 1}`, load: Math.round(load), cur: i === 5 }
   })
   const loadMax = Math.max(1, ...weeks.map((w) => w.load))
 
@@ -92,7 +102,7 @@ export function Summary({ data, config }: { data: AppData; config: RepoConfig })
           <h1>Résumé</h1>
         </div>
         <div className="row" style={{ flexWrap: 'wrap', gap: 8 }}>
-          {macro && <span className="pill accent">{macro.macro.id} {macro.macro.name} · W{macro.week}</span>}
+          {planBadge && <a href="#plan" className="pill accent" style={{ textDecoration: 'none' }}>{planBadge}</a>}
           <button className="btn ghost" style={{ height: 34, fontSize: 13 }} onClick={sync}>Synchroniser</button>
         </div>
       </header>
